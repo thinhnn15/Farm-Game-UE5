@@ -4,6 +4,11 @@ Build/
 DerivedDataCache/
 Intermediate/
 Saved/
+Content/__ExternalActors__/
+Content/__ExternalObjects__/
+
+# IDE
+*.sln
 
 # Ignore Visual Studio files
 .vscode/
