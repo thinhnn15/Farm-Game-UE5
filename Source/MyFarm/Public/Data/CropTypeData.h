@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTypeData.h"
-#include "GameplayTypeData.h"
-#include "../Gameplay/Crop/CropGrowthStage.h"
+#include "Public/Gameplay/Crop/CropGrowthStage.h"
+#include "Public/Gameplay/Crop/CropVisualData.h"
 #include "CropTypeData.generated.h"
 
 /**
@@ -17,10 +17,22 @@ class MYFARM_API UCropTypeData : public UGameplayTypeData
     GENERATED_BODY()
 
 public:
-    UFUNCTION( BlueprintPure, Category = "Growth" )
+    UFUNCTION( BlueprintPure, Category = "Crop|Growth" )
     ECropGrowthStage GetStageForDay( int32 DaysGrown ) const;
+    
+    // Visual representation for a given growth stage
+    const FCropStageVisual* GetVisualForStage(
+        ECropGrowthStage Stage
+    ) const;
+    
+    // Harvest
+    UFUNCTION( BlueprintPure, Category = "Crop|Harvest" )
+    bool IsRegrowable() const;
+    
+    UFUNCTION( BlueprintPure, Category = "Crop|Harvest" )
+    int32 GetRegrowDays() const;
 
-public:
+protected:
     // Total days needed to reach mature stage
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Growth" )
     int32 TotalGrowthDays = 1;
@@ -28,6 +40,9 @@ public:
     // Growth stages threshold ( day -> stage )
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Growth" )
     TMap< int32, ECropGrowthStage > GrowthStages;
+    
+    UPROPERTY(EditDefaultsOnly, Category = "Visual")
+    TMap< ECropGrowthStage, FCropStageVisual > StageVisuals;
 
     // Can this crop be harvested multiple times
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Harvest" )

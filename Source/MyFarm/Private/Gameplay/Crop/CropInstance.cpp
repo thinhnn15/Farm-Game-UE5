@@ -7,7 +7,7 @@ void UCropInstance::Init( UCropTypeData* InCropTypeData )
 {
     CropData = InCropTypeData;
     DaysGrown = 0;
-    CurrentGrowthStage = ECropGrowthStage::Seed;
+    CurrentStage = ECropGrowthStage::Seed;
 }
 
 void UCropInstance::OnDayAdvanced( int32 NewDay )
@@ -19,14 +19,26 @@ void UCropInstance::OnDayAdvanced( int32 NewDay )
     // Determine stage from data
     const ECropGrowthStage NewStage = CropData->GetStageForDay( DaysGrown );
 
-    if ( NewStage == CurrentGrowthStage )
+    if ( NewStage == CurrentStage )
         return;
 
-    CurrentGrowthStage = NewStage;
+    CurrentStage = NewStage;
     UE_LOG( LogTemp, Log,
             TEXT("[CropInstance] %s advanced to stage %d at day %d"),
             *GetNameSafe(CropData),
-            (int32)CurrentGrowthStage,
+            (int32)CurrentStage,
             DaysGrown
     );
+    OnStageChanged.Broadcast( CurrentStage );
+}
+
+ECropGrowthStage UCropInstance::GetCurrentStage() const
+{
+    return CurrentStage;
+}
+
+void UCropInstance::OnInitialize()
+{
+    DaysGrown = 0;
+    CurrentStage = ECropGrowthStage::Seed;
 }

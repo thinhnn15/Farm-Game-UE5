@@ -21,3 +21,18 @@ ECropGrowthStage UCropTypeData::GetStageForDay( int32 DaysGrown ) const
 
     return ResultStage;
 }
+
+const FCropStageVisual* UCropTypeData::GetVisualForStage( ECropGrowthStage Stage ) const
+{
+    return StageVisuals.Find( Stage );
+}
+
+bool UCropTypeData::IsRegrowable() const
+{
+    return bRegrowable;
+}
+
+int32 UCropTypeData::GetRegrowDays() const
+{
+    return RegrowDays;
+}

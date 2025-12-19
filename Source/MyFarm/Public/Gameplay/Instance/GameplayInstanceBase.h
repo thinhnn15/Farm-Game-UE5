@@ -9,12 +9,32 @@
 /**
  * 
  */
-UCLASS()
+UCLASS( Abstract )
 class MYFARM_API UGameplayInstanceBase : public UObject
 {
     GENERATED_BODY()
 
 public:
-    virtual void Initialize() {}
-    virtual void Deinitialize() {}
+    // Entry point to initialize this instance
+    void InitializeInstance();
+
+    // Entry point to deinitialize this instance
+    void DeinitializeInstance();
+
+    // Is this instance initialized
+    bool IsInitialized() const;
+
+    // World context (safe helper)
+    virtual UWorld* GetWorld() const override;
+
+protected:
+    // Called once when instance is initialized
+    virtual void OnInitialize();
+
+    // Called once when instance is deinitialized
+    virtual void OnDeinitialize();
+
+private:
+    // Prevent double init
+    bool bIsInitialized = false;
 };
