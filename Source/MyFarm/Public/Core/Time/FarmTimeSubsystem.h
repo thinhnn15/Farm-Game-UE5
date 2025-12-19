@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DayAdvanceListener.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "FarmTimeSubsystem.generated.h"
 
@@ -18,6 +19,10 @@ class MYFARM_API UFarmTimeSubsystem : public UGameInstanceSubsystem
     GENERATED_BODY()
 
 public:
+    void RegisterDayListener( const TScriptInterface< IDayAdvanceListener >& Listener );
+    void UnregisterDayListener( const TScriptInterface< IDayAdvanceListener >& Listener );
+
+public:
     UFUNCTION( BlueprintCallable, Category = "Time" )
     void AdvanceDay();
 
@@ -29,5 +34,8 @@ public:
 
 private:
     UPROPERTY()
-    int32 m_CurrentDay = 0;
+    int32 CurrentDay = 0;
+    
+    UPROPERTY()
+    TArray< TScriptInterface< IDayAdvanceListener > > DayListeners;
 };
