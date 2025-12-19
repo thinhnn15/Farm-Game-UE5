@@ -1,0 +1,53 @@
+# Ignore build files
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Ignore Visual Studio files
+.vscode/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore Rider files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Java files
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignore CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore Ant build files
+build/
+dist/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
