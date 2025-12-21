@@ -16,13 +16,13 @@ struct FCropStageVisual
 
 public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Visual" )
-    UStaticMesh* Mesh = nullptr;
+    TObjectPtr< UStaticMesh > Mesh;
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Visual" )
-    UMaterialInterface* Material = nullptr;
+    TObjectPtr< UMaterialInterface > Material;
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Visual" )
-    UNiagaraSystem* EnterStageFX = nullptr;
+    TObjectPtr< UNiagaraSystem > EnterStageFX;
 };
 
 UCLASS( BlueprintType )
