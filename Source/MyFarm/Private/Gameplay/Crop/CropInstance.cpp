@@ -37,6 +37,11 @@ ECropGrowthStage UCropInstance::GetCurrentStage() const
     return CurrentStage;
 }
 
+UCropTypeData* UCropInstance::GetCropData() const
+{
+    return CropData;
+}
+
 void UCropInstance::OnInitialize()
 {
     DaysGrown = 0;

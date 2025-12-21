@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "NiagaraSystem.h"
+#include "Public/Gameplay/Crop/CropGrowthStage.h"
 #include "CropVisualData.generated.h"
 
 class UNiagaraSystem;
@@ -22,4 +23,16 @@ public:
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Visual" )
     UNiagaraSystem* EnterStageFX = nullptr;
+};
+
+UCLASS( BlueprintType )
+class MYFARM_API UCropVisualData : public UDataAsset
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
+    TMap< ECropGrowthStage, FCropStageVisual > StageVisuals;
+
+    const FCropStageVisual* GetVisual( ECropGrowthStage Stage ) const;
 };

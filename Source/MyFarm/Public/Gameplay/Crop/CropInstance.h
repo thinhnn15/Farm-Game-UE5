@@ -27,6 +27,8 @@ public:
     virtual void OnDayAdvanced( int32 NewDay ) override;
 
     ECropGrowthStage GetCurrentStage() const;
+    
+    UCropTypeData* GetCropData() const;
 
 protected:
     UPROPERTY()
