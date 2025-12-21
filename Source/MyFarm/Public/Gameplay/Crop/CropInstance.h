@@ -41,4 +41,5 @@ protected:
     ECropGrowthStage CurrentStage = ECropGrowthStage::Seed;
     
     virtual void OnInitialize() override;
+    virtual void OnDeinitialize() override;
 };

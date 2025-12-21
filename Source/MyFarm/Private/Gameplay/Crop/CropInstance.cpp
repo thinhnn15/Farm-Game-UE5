@@ -2,6 +2,8 @@
 
 
 #include "Public/Gameplay/Crop/CropInstance.h"
+#include "Core/Time/FarmTimeSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
 void UCropInstance::Init( UCropTypeData* InCropTypeData )
 {
@@ -44,6 +46,37 @@ UCropTypeData* UCropInstance::GetCropData() const
 
 void UCropInstance::OnInitialize()
 {
-    DaysGrown = 0;
-    CurrentStage = ECropGrowthStage::Seed;
+    Super::OnInitialize();
+
+    UWorld* World = GetWorld();
+    if ( !World )
+        return;
+
+    UGameInstance* GI = World->GetGameInstance();
+    if ( !GI )
+        return;
+
+    UFarmTimeSubsystem* FarmTimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
+    if ( !FarmTimeSubsystem )
+        return;
+
+    FarmTimeSubsystem->RegisterDayListener( this );
+}
+
+void UCropInstance::OnDeinitialize()
+{
+    Super::OnDeinitialize();
+    UWorld* World = GetWorld();
+    if ( !World )
+        return;
+
+    UGameInstance* GI = World->GetGameInstance();
+    if ( !GI )
+        return;
+    
+    UFarmTimeSubsystem* FarmTimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
+    if ( !FarmTimeSubsystem )
+        return;
+    
+    FarmTimeSubsystem->UnregisterDayListener( this );
 }

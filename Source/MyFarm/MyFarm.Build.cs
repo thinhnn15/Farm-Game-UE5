@@ -28,13 +28,7 @@ public class MyFarm : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[]
 		{
-			"MyFarm",
-			"MyFarm/Variant_Strategy",
-			"MyFarm/Variant_Strategy/UI",
-			"MyFarm/Variant_TwinStick",
-			"MyFarm/Variant_TwinStick/AI",
-			"MyFarm/Variant_TwinStick/Gameplay",
-			"MyFarm/Variant_TwinStick/UI"
+			"MyFarm"
 		});
 
 		// Uncomment if you are using Slate UI
