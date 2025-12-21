@@ -36,3 +36,8 @@ int32 UCropTypeData::GetRegrowDays() const
 {
     return RegrowDays;
 }
+
+UCropVisualData* UCropTypeData::GetVisualData() const
+{
+    return VisualData;
+}

@@ -31,7 +31,10 @@ public:
     
     UFUNCTION( BlueprintPure, Category = "Crop|Harvest" )
     int32 GetRegrowDays() const;
-
+    
+    // Get Visual Data
+    UFUNCTION( BlueprintPure, Category = "Crop|Visual" )
+    UCropVisualData* GetVisualData() const;   
 protected:
     // Total days needed to reach mature stage
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Growth" )
@@ -51,4 +54,7 @@ protected:
     // Days to regrow after harvest
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Harvest", meta = ( EditCondition = "bRegrowable" ) )
     int32 RegrowDays = 1;
+    
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Visual" )
+    TObjectPtr< UCropVisualData > VisualData;
 };

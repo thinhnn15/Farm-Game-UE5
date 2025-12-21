@@ -28,10 +28,10 @@ void ACropActor::BindCropInstance( UCropInstance* InCropInstance )
 
     CropInstance = InCropInstance;
 
-    // if (UCropTypeData* CropType = CropInstance->GetCropData())
-    // {
-    //     CropVisualData = CropType->Visua
-    // }
+    if ( UCropTypeData* CropType = CropInstance->GetCropData() )
+    {
+        CropVisualData = CropType->GetVisualData();
+    }
 
     // Bind to stage change event
     CropInstance->OnStageChanged.AddDynamic( this, &ACropActor::OnCropStageChanged );
