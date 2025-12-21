@@ -10,6 +10,7 @@ void UCropInstance::Init( UCropTypeData* InCropTypeData )
     CropData = InCropTypeData;
     DaysGrown = 0;
     CurrentStage = ECropGrowthStage::Seed;
+    InitializeInstance();
 }
 
 void UCropInstance::OnDayAdvanced( int32 NewDay )
@@ -47,12 +48,8 @@ UCropTypeData* UCropInstance::GetCropData() const
 void UCropInstance::OnInitialize()
 {
     Super::OnInitialize();
-
-    UWorld* World = GetWorld();
-    if ( !World )
-        return;
-
-    UGameInstance* GI = World->GetGameInstance();
+    
+    UGameInstance* GI = GetTypedOuter< UGameInstance >();
     if ( !GI )
         return;
 
@@ -66,11 +63,8 @@ void UCropInstance::OnInitialize()
 void UCropInstance::OnDeinitialize()
 {
     Super::OnDeinitialize();
-    UWorld* World = GetWorld();
-    if ( !World )
-        return;
 
-    UGameInstance* GI = World->GetGameInstance();
+    UGameInstance* GI = GetTypedOuter< UGameInstance >();
     if ( !GI )
         return;
     
