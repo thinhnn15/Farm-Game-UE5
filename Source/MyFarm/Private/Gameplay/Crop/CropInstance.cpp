@@ -41,6 +41,11 @@ void UCropInstance::Harvest()
         return;
 
     OnHarvested.Broadcast();
+    UE_LOG( LogTemp, Log,
+            TEXT("[CropInstance] %s harvested at day %d"),
+            *GetNameSafe(CropData),
+            DaysGrown
+    );
     // Handle regrow
     if ( CropData->IsRegrowable() )
         EnterRegrow();
