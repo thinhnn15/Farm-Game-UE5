@@ -76,10 +76,16 @@ void ACropActor::ApplyStageVisuals( ECropGrowthStage Stage )
 void ACropActor::TryHarvest()
 {
     if ( !CropInstance )
+    {
+        UE_LOG( LogTemp, Warning, TEXT( "[CropActor] TryHarvest() called but CropInstance is null!" ) );
         return;
+    }
 
     if ( !CropInstance->CanHarvest() )
+    {
+        UE_LOG( LogTemp, Warning, TEXT( "[CropActor] TryHarvest() called but crop cannot be harvested at current stage!" ) );
         return;
-
+    }
+    UE_LOG( LogTemp, Warning, TEXT( "[CropActor] TryHarvest() successful, harvesting crop." ) );
     CropInstance->Harvest();
 }
