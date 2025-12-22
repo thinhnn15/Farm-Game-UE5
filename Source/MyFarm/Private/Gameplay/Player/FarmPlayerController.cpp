@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "EngineUtils.h"
+#include "Gameplay/Farm/FarmPlot.h"
 #include "Public/Core/Time/FarmTimeSubsystem.h"
 #include "Public/Gameplay/Crop/CropActor.h"
 
@@ -36,6 +37,21 @@ void AFarmPlayerController::SetupInputComponent()
     EnhancedInputComponent->BindAction( NextDayAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_NextDay );
     ensure( HarvestAction );
     EnhancedInputComponent->BindAction( HarvestAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_Harvest );
+    ensure( PlantCropAction );
+    EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_PlantCrop );
+}
+
+void AFarmPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+    
+    bShowMouseCursor = true;
+    bEnableClickEvents = true;
+    bEnableMouseOverEvents = true;
+    
+    FInputModeGameAndUI InputMode;
+    InputMode.SetHideCursorDuringCapture( false );
+    SetInputMode( InputMode );
 }
 
 void AFarmPlayerController::Debug_NextDay()
@@ -69,4 +85,18 @@ void AFarmPlayerController::Debug_Harvest()
         }
     }
     UE_LOG( LogTemp, Warning, TEXT( "[Debug] No CropActor found in level" ) );
+}
+
+void AFarmPlayerController::Debug_PlantCrop()
+{
+    FHitResult Hit;
+    GetHitResultUnderCursor( ECC_Visibility, false, Hit );
+    if ( !Hit.bBlockingHit )
+        return;
+
+    AFarmPlot* Plot = Cast< AFarmPlot >( Hit.GetActor() );
+    if ( !Plot )
+        return;
+
+    Plot->PlantCrop( DebugSeedType );
 }

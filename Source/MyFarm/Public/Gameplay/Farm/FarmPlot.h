@@ -9,6 +9,8 @@
 class UCropInstance;
 class UCropTypeData;
 class ACropActor;
+class UBoxComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class MYFARM_API AFarmPlot : public AActor
@@ -25,22 +27,33 @@ public:
     UFUNCTION( BlueprintCallable, Category = "Farm" )
     bool PlantCrop( UCropTypeData* CropType );
 
+    void ClearCrop();
+
     // Try to harvest the crop in this plot
     UFUNCTION( BlueprintCallable, Category = "Farm" )
     bool TryHarvest();
 
 protected:
     virtual void BeginPlay() override;
-    
+
+protected:
+    // Actor class for visual
+    UPROPERTY( EditAnywhere, Category="Crop" )
+    TSubclassOf< ACropActor > CropActorClass;
+
+    // Runtime
     // Logic
     UPROPERTY()
     TObjectPtr< UCropInstance > CropInstance;
-    
+
     // Visual
     UPROPERTY()
     TObjectPtr< ACropActor > CropActor;
 
-    // Actor class for spawning crop visuals
-    UPROPERTY( EditAnywhere, Category = "Farm" )
-    TSubclassOf< ACropActor > CropActorClass;
+    // Component
+    UPROPERTY( VisibleAnywhere, Category="Components" )
+    TObjectPtr< UBoxComponent > PlotCollision;
+
+    UPROPERTY( VisibleAnywhere, Category="Components" )
+    TObjectPtr< UStaticMeshComponent > PlotMesh;
 };

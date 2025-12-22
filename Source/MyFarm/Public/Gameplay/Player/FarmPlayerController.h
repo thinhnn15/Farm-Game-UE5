@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UCropTypeData;
 
 UCLASS()
 class MYFARM_API AFarmPlayerController : public APlayerController
@@ -16,9 +17,11 @@ class MYFARM_API AFarmPlayerController : public APlayerController
 
 protected:
     virtual void SetupInputComponent() override;
+    virtual void BeginPlay() override;
 
     void Debug_NextDay();
     void Debug_Harvest();
+    void Debug_PlantCrop();
 
 protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
@@ -29,4 +32,10 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > HarvestAction;
+    
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > PlantCropAction;
+
+    UPROPERTY( EditDefaultsOnly, Category="Debug" )
+    TObjectPtr< UCropTypeData > DebugSeedType;
 };

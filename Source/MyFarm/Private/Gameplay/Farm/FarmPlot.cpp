@@ -5,11 +5,30 @@
 #include "Public/Gameplay/Crop/CropActor.h"
 #include "Public/Gameplay/Crop/CropInstance.h"
 #include "Public/Data/CropTypeData.h"
+#include "Public/Data/CropTypeData.h"
+#include "Components/BoxComponent.h"
 
 
 AFarmPlot::AFarmPlot()
 {
     PrimaryActorTick.bCanEverTick = false;
+
+    // Collision (Root)
+    PlotCollision = CreateDefaultSubobject< UBoxComponent >( TEXT( "PlotCollision" ) );
+    SetRootComponent( PlotCollision );
+
+    PlotCollision->SetBoxExtent( FVector( 100.f, 100.f, 20.f ) );
+    PlotCollision->SetCollisionEnabled( ECollisionEnabled::QueryOnly );
+    PlotCollision->SetCollisionObjectType( ECC_WorldDynamic );
+
+    PlotCollision->SetCollisionResponseToAllChannels( ECR_Ignore );
+    PlotCollision->SetCollisionResponseToChannel( ECC_Visibility, ECR_Block );
+
+    // Visual Mesh
+    PlotMesh = CreateDefaultSubobject< UStaticMeshComponent >( TEXT( "PlotMesh" ) );
+    PlotMesh->SetupAttachment( PlotCollision );
+
+    PlotMesh->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 
 void AFarmPlot::BeginPlay()
@@ -29,6 +48,7 @@ bool AFarmPlot::PlantCrop( UCropTypeData* CropType )
         UE_LOG( LogTemp, Warning, TEXT("[FarmPlot] Cannot plant crop.") );
         return false;
     }
+    ClearCrop();
     // Create Crop Instance (logic)
     CropInstance = NewObject< UCropInstance >( GetGameInstance() );
     CropInstance->Init( CropType );
@@ -58,6 +78,21 @@ bool AFarmPlot::PlantCrop( UCropTypeData* CropType )
     CropActor->BindCropInstance( CropInstance );
     UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Planted crop: %s"), *GetNameSafe(CropType) );
     return true;
+}
+
+void AFarmPlot::ClearCrop()
+{
+    if ( CropActor )
+    {
+        CropActor->Destroy();
+        CropActor = nullptr;
+    }
+
+    if ( CropInstance )
+    {
+        CropInstance->DeinitializeInstance();
+        CropInstance = nullptr;
+    }
 }
 
 bool AFarmPlot::TryHarvest()
