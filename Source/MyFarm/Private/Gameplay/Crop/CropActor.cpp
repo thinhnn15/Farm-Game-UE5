@@ -4,7 +4,6 @@
 #include "Public/Gameplay/Crop/CropActor.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "SkeletonTreeBuilder.h"
 #include "Public/Gameplay/Crop/CropInstance.h"
 #include "Public/Data/CropTypeData.h"
 #include "Components/StaticMeshComponent.h"

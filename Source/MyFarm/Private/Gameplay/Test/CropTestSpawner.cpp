@@ -3,7 +3,6 @@
 
 #include "Gameplay/Test/CropTestSpawner.h"
 
-#include "SkeletonTreeBuilder.h"
 #include "Gameplay/Crop/CropActor.h"
 #include "Gameplay/Crop/CropInstance.h"
 
