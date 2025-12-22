@@ -8,7 +8,6 @@
 #include "Public/Data/CropTypeData.h"
 #include "Components/StaticMeshComponent.h"
 
-
 ACropActor::ACropActor()
 {
     Root = CreateDefaultSubobject< USceneComponent >( TEXT( "Root" ) );
@@ -35,12 +34,11 @@ void ACropActor::BindCropInstance( UCropInstance* InCropInstance )
     CropInstance = InCropInstance;
 
     if ( UCropTypeData* CropType = CropInstance->GetCropData() )
-    {
         CropVisualData = CropType->GetVisualData();
-    }
 
     // Bind to stage change event
     CropInstance->OnStageChanged.AddDynamic( this, &ACropActor::OnCropStageChanged );
+    CropInstance->OnHarvested.AddDynamic( this, &ACropActor::OnCropHarvested );
 
     // Apply initial visual
     ApplyStageVisuals( CropInstance->GetCurrentStage() );
@@ -51,6 +49,11 @@ void ACropActor::OnCropStageChanged( ECropGrowthStage NewStage )
     ApplyStageVisuals( NewStage );
 }
 
+void ACropActor::OnCropHarvested()
+{
+    UE_LOG( LogTemp, Log, TEXT("Crop harvested") );
+}
+
 void ACropActor::ApplyStageVisuals( ECropGrowthStage Stage )
 {
     if ( !CropVisualData )
@@ -59,16 +62,24 @@ void ACropActor::ApplyStageVisuals( ECropGrowthStage Stage )
     const FCropStageVisual* Visual = CropVisualData->GetVisual( Stage );
     if ( !Visual )
         return;
+
     if ( Visual->Mesh )
-    {
         MeshComponent->SetStaticMesh( Visual->Mesh );
-    }
+
     if ( Visual->Material )
-    {
         MeshComponent->SetMaterial( 0, Visual->Material );
-    }
+
     if ( Visual->EnterStageFX )
-    {
         UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld(), Visual->EnterStageFX, GetActorLocation() );
-    }
+}
+
+void ACropActor::TryHarvest()
+{
+    if ( !CropInstance )
+        return;
+
+    if ( !CropInstance->CanHarvest() )
+        return;
+
+    CropInstance->Harvest();
 }

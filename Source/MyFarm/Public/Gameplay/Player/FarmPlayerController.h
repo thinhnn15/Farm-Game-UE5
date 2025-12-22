@@ -13,15 +13,20 @@ UCLASS()
 class MYFARM_API AFarmPlayerController : public APlayerController
 {
     GENERATED_BODY()
+
 protected:
     virtual void SetupInputComponent() override;
-    
+
     void Debug_NextDay();
-    
+    void Debug_Harvest();
+
 protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    UInputMappingContext* DebugInputContext;
-    
+    TObjectPtr< UInputMappingContext > DebugInputContext;
+
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    UInputAction* NextDayAction;
+    TObjectPtr< UInputAction > NextDayAction;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > HarvestAction;
 };

@@ -8,7 +8,8 @@ UENUM(BlueprintType)
 enum class ECropGrowthStage : uint8
 {
     Seed        UMETA(DisplayName = "Seed"),
-    Sprout      UMETA(DisplayName = "Sprout"),
     Growing     UMETA(DisplayName = "Growing"),
-    Mature      UMETA(DisplayName = "Mature")
+    Mature      UMETA(DisplayName = "Mature"),
+    Harvestable UMETA(DisplayName = "Harvestable"),
+    Dead        UMETA(DisplayName = "Dead")
 };

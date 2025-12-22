@@ -11,6 +11,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnCropStageChanged, ECropGrowthStage, NewStage );
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnCropHarvested );
+
 UCLASS( BlueprintType )
 class MYFARM_API UCropInstance : public UGameplayInstanceBase,
                                  public IDayAdvanceListener
@@ -20,16 +22,29 @@ class MYFARM_API UCropInstance : public UGameplayInstanceBase,
 public:
     UPROPERTY( BlueprintAssignable, Category = "Crop" )
     FOnCropStageChanged OnStageChanged;
-
+    
+    UPROPERTY( BlueprintAssignable, Category = "Crop" )
+    FOnCropHarvested OnHarvested;
+    /*------------- Lifecycle -------------*/
     void Init( UCropTypeData* InCropTypeData );
-
+    virtual void OnInitialize() override;
+    virtual void OnDeinitialize() override;
+    /*------------- Time -------------*/
     // IDayAdvanceListener interface
     virtual void OnDayAdvanced( int32 NewDay ) override;
 
+    /*------------- Stage -------------*/
     ECropGrowthStage GetCurrentStage() const;
-    
     UCropTypeData* GetCropData() const;
-
+    
+    /*------------- Harvest -------------*/
+    bool CanHarvest() const;
+    void Harvest();
+protected:
+    /*------------- Internal -------------*/
+    void UpdateGrowthStage();
+    void EnterRegrow();
+    
 protected:
     UPROPERTY()
     TObjectPtr< UCropTypeData > CropData;
@@ -39,7 +54,4 @@ protected:
 
     UPROPERTY()
     ECropGrowthStage CurrentStage = ECropGrowthStage::Seed;
-    
-    virtual void OnInitialize() override;
-    virtual void OnDeinitialize() override;
 };

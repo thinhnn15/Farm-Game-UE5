@@ -15,10 +15,47 @@ void UCropInstance::Init( UCropTypeData* InCropTypeData )
 
 void UCropInstance::OnDayAdvanced( int32 NewDay )
 {
+    DaysGrown++;
+    UpdateGrowthStage();
+}
+
+ECropGrowthStage UCropInstance::GetCurrentStage() const
+{
+    return CurrentStage;
+}
+
+UCropTypeData* UCropInstance::GetCropData() const
+{
+    return CropData;
+}
+
+bool UCropInstance::CanHarvest() const
+{
+    return CropData
+        && CropData->CanHarvestAtStage( CurrentStage );
+}
+
+void UCropInstance::Harvest()
+{
+    if ( !CanHarvest() )
+        return;
+
+    OnHarvested.Broadcast();
+    // Handle regrow
+    if ( CropData->IsRegrowable() )
+        EnterRegrow();
+    else
+    {
+        CurrentStage = ECropGrowthStage::Dead;
+        OnStageChanged.Broadcast( CurrentStage );
+    }
+}
+
+void UCropInstance::UpdateGrowthStage()
+{
     if ( !CropData )
         return;
 
-    DaysGrown++;
     // Determine stage from data
     const ECropGrowthStage NewStage = CropData->GetStageForDay( DaysGrown );
 
@@ -35,29 +72,28 @@ void UCropInstance::OnDayAdvanced( int32 NewDay )
     OnStageChanged.Broadcast( CurrentStage );
 }
 
-ECropGrowthStage UCropInstance::GetCurrentStage() const
+void UCropInstance::EnterRegrow()
 {
-    return CurrentStage;
-}
-
-UCropTypeData* UCropInstance::GetCropData() const
-{
-    return CropData;
+    // Roll back growth days so it regrows faster
+    DaysGrown = FMath::Max( 0, CropData->GetTotalGrowthDays() - CropData->GetRegrowDays() );
+    
+    CurrentStage = ECropGrowthStage::Growing;
+    OnStageChanged.Broadcast( CurrentStage );
 }
 
 void UCropInstance::OnInitialize()
 {
     Super::OnInitialize();
-    
+
     UGameInstance* GI = GetTypedOuter< UGameInstance >();
     if ( !GI )
         return;
 
-    UFarmTimeSubsystem* FarmTimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
-    if ( !FarmTimeSubsystem )
+    UFarmTimeSubsystem* TimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
+    if ( !TimeSubsystem )
         return;
 
-    FarmTimeSubsystem->RegisterDayListener( this );
+    TimeSubsystem->RegisterDayListener( this );
 }
 
 void UCropInstance::OnDeinitialize()
@@ -67,10 +103,10 @@ void UCropInstance::OnDeinitialize()
     UGameInstance* GI = GetTypedOuter< UGameInstance >();
     if ( !GI )
         return;
-    
-    UFarmTimeSubsystem* FarmTimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
-    if ( !FarmTimeSubsystem )
+
+    UFarmTimeSubsystem* TimeSubsystem = GI->GetSubsystem< UFarmTimeSubsystem >();
+    if ( !TimeSubsystem )
         return;
-    
-    FarmTimeSubsystem->UnregisterDayListener( this );
+
+    TimeSubsystem->UnregisterDayListener( this );
 }

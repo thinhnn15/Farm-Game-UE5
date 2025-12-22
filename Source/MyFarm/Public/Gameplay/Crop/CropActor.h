@@ -22,19 +22,24 @@ public:
     // Bind this actor ro a crop instance
     void BindCropInstance( UCropInstance* InCropInstance );
 
+    // Try harvest
+    UFUNCTION( BlueprintCallable, Category = "Crop" )
+    void TryHarvest();
 protected:
     virtual void BeginPlay() override;
 
     UFUNCTION()
     void OnCropStageChanged( ECropGrowthStage NewStage );
+    UFUNCTION()
+    void OnCropHarvested();
 
     // Apply visual changes for stage
     void ApplyStageVisuals( ECropGrowthStage Stage );
 
 protected:
     UPROPERTY( VisibleAnywhere )
-    TObjectPtr<USceneComponent> Root;
-    
+    TObjectPtr< USceneComponent > Root;
+
     // Mesh representing the crop
     UPROPERTY( VisibleAnywhere )
     TObjectPtr< UStaticMeshComponent > MeshComponent;

@@ -20,6 +20,9 @@ public:
     UFUNCTION( BlueprintPure, Category = "Crop|Growth" )
     ECropGrowthStage GetStageForDay( int32 DaysGrown ) const;
     
+    UFUNCTION( BlueprintPure, Category = "Crop|Growth" )
+    int32 GetTotalGrowthDays() const;
+    
     // Visual representation for a given growth stage
     const FCropStageVisual* GetVisualForStage(
         ECropGrowthStage Stage
@@ -35,6 +38,10 @@ public:
     // Get Visual Data
     UFUNCTION( BlueprintPure, Category = "Crop|Visual" )
     UCropVisualData* GetVisualData() const;   
+    
+    // Can harvest at stage
+    UFUNCTION( BlueprintPure, Category = "Crop|Visual" )
+    bool CanHarvestAtStage(ECropGrowthStage Stage) const;
 protected:
     // Total days needed to reach mature stage
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Growth" )
