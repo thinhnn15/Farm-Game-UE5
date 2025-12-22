@@ -25,6 +25,9 @@ public:
     
     UPROPERTY( BlueprintAssignable, Category = "Crop" )
     FOnCropHarvested OnHarvested;
+    
+    UFUNCTION( BlueprintCallable, Category = "Crop" )
+    bool TryHarvest();
     /*------------- Lifecycle -------------*/
     void Init( UCropTypeData* InCropTypeData );
     virtual void OnInitialize() override;
@@ -39,7 +42,7 @@ public:
     
     /*------------- Harvest -------------*/
     bool CanHarvest() const;
-    void Harvest();
+    bool Harvest();
 protected:
     /*------------- Internal -------------*/
     void UpdateGrowthStage();

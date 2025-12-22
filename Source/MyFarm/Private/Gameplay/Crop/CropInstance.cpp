@@ -5,6 +5,22 @@
 #include "Core/Time/FarmTimeSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
+bool UCropInstance::TryHarvest()
+{
+    if ( !CanHarvest() )
+    {
+        UE_LOG( LogTemp, Warning,
+                TEXT("[CropInstance] %s cannot be harvested at stage %d"),
+                *GetNameSafe(CropData),
+                (int32)CurrentStage
+        );
+        return false;
+    }
+
+    Harvest();
+    return true;
+}
+
 void UCropInstance::Init( UCropTypeData* InCropTypeData )
 {
     CropData = InCropTypeData;
@@ -35,11 +51,8 @@ bool UCropInstance::CanHarvest() const
         && CropData->CanHarvestAtStage( CurrentStage );
 }
 
-void UCropInstance::Harvest()
+bool UCropInstance::Harvest()
 {
-    if ( !CanHarvest() )
-        return;
-
     OnHarvested.Broadcast();
     UE_LOG( LogTemp, Log,
             TEXT("[CropInstance] %s harvested at day %d"),
@@ -48,12 +61,23 @@ void UCropInstance::Harvest()
     );
     // Handle regrow
     if ( CropData->IsRegrowable() )
+    {
+        UE_LOG( LogTemp, Log,
+                TEXT("[CropInstance] %s is regrowable, entering regrow phase"),
+                *GetNameSafe(CropData)
+        );
         EnterRegrow();
+    }
     else
     {
+        UE_LOG( LogTemp, Log,
+                TEXT("[CropInstance] %s has no regrow, marking as Dead"),
+                *GetNameSafe(CropData)
+        );
         CurrentStage = ECropGrowthStage::Dead;
         OnStageChanged.Broadcast( CurrentStage );
     }
+    return true;
 }
 
 void UCropInstance::UpdateGrowthStage()
@@ -81,7 +105,7 @@ void UCropInstance::EnterRegrow()
 {
     // Roll back growth days so it regrows faster
     DaysGrown = FMath::Max( 0, CropData->GetTotalGrowthDays() - CropData->GetRegrowDays() );
-    
+
     CurrentStage = ECropGrowthStage::Growing;
     OnStageChanged.Broadcast( CurrentStage );
 }
