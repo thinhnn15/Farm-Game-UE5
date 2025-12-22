@@ -12,8 +12,15 @@
 
 ACropActor::ACropActor()
 {
+    Root = CreateDefaultSubobject< USceneComponent >( TEXT( "Root" ) );
+    SetRootComponent( Root );
+
     MeshComponent = CreateDefaultSubobject< UStaticMeshComponent >( TEXT( "CropMesh" ) );
     RootComponent = MeshComponent;
+
+    MeshComponent->SetMobility( EComponentMobility::Movable );
+    MeshComponent->SetVisibility( true );
+    MeshComponent->SetHiddenInGame( false );
 }
 
 void ACropActor::BeginPlay()

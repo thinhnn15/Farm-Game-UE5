@@ -32,6 +32,9 @@ protected:
     void ApplyStageVisuals( ECropGrowthStage Stage );
 
 protected:
+    UPROPERTY( VisibleAnywhere )
+    TObjectPtr<USceneComponent> Root;
+    
     // Mesh representing the crop
     UPROPERTY( VisibleAnywhere )
     TObjectPtr< UStaticMeshComponent > MeshComponent;

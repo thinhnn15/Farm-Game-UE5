@@ -14,9 +14,19 @@ UCLASS()
 class MYFARM_API ACropTestSpawner : public AActor
 {
     GENERATED_BODY()
+public:
+    ACropTestSpawner();
 
 protected:
     virtual void BeginPlay() override;
+    
+    // Root scense
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    TObjectPtr< USceneComponent > Root;
+    
+    // Visual mesh
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    TObjectPtr< UStaticMeshComponent > MeshComponent;
     
 public:
     UPROPERTY( EditAnywhere, category = "Test" )
