@@ -20,8 +20,12 @@ void UInventoryWidget::RefreshInventory()
         const FName SeedRowId = Item.Key;
         const int32 Count = Item.Value;
 
+        if ( Count <= 0 )
+            continue;
+
         USeedItemEntryWidget* Entry = CreateWidget< USeedItemEntryWidget >( this, SeedItemEntryWidgetClass );
-        check( Entry );
+        if ( !Entry )
+            continue;
 
         Entry->Setup( SeedRowId, Count );
         Entry->OnSeedItemClicked.AddUObject( this, &UInventoryWidget::HandleSeedSelected );
@@ -32,6 +36,11 @@ void UInventoryWidget::RefreshInventory()
 
     Txt_SelectedSeed->SetText( FText::FromString( "Selected: None" ) );
     SelectedSeedRowId = NAME_None;
+}
+
+FName UInventoryWidget::GetSelectedSeed() const
+{
+    return SelectedSeedRowId;
 }
 
 void UInventoryWidget::NativeConstruct()

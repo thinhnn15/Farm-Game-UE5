@@ -45,6 +45,8 @@ void AFarmPlayerController::SetupInputComponent()
     EnhancedInputComponent->BindAction( HarvestAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_Harvest );
     ensure( PlantCropAction );
     EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_PlantCrop );
+    ensure( ToggleInventoryAction );
+    EnhancedInputComponent->BindAction( ToggleInventoryAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_ToggleInventory );
 }
 
 void AFarmPlayerController::BeginPlay()
@@ -131,6 +133,36 @@ void AFarmPlayerController::Debug_SelectSeed( FName SeedRowId )
         UE_LOG( LogTemp, Warning, TEXT( "[Debug] SeedRowId %s not found" ), *SeedRowId.ToString() );
         return;
     }
+}
+
+void AFarmPlayerController::Debug_ToggleInventory()
+{
+    if ( !InventoryWidget )
+    {
+        if ( !InventoryWidgetClass )
+            return;
+
+        InventoryWidget = CreateWidget< UInventoryWidget >( this, InventoryWidgetClass );
+        if ( !InventoryWidget )
+            return;
+
+        InventoryWidget->AddToViewport();
+        // Show mouse
+        bShowMouseCursor = true;
+
+        SetInputMode( FInputModeUIOnly() );
+
+        UE_LOG( LogTemp, Log, TEXT( "[Debug] Inventory Click" ) );
+        return;
+    }
+    InventoryWidget->RemoveFromViewport();
+    InventoryWidget = nullptr;
+
+    // Hide mouse
+    bShowMouseCursor = false;
+    SetInputMode( FInputModeGameOnly() );
+
+    UE_LOG( LogTemp, Log, TEXT( "[Debug] Inventory Click" ) );
 }
 
 AFarmPlot* AFarmPlayerController::GetHoveredPlot() const
