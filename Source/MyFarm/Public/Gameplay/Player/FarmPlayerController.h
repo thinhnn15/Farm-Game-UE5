@@ -23,6 +23,7 @@ protected:
     void Debug_NextDay();
     void Debug_Harvest();
     void Debug_PlantCrop();
+    void Debug_SelectSeed( FName SeedRowId );
 
 protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )

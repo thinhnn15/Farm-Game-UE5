@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "EngineUtils.h"
+#include "Core/Data/FarmSeedSubsystem.h"
 #include "Gameplay/Farm/FarmPlot.h"
 #include "Public/Core/Time/FarmTimeSubsystem.h"
 #include "Public/Gameplay/Crop/CropActor.h"
@@ -89,6 +90,20 @@ void AFarmPlayerController::Debug_PlantCrop()
     }
     
     Plot->PlantCrop( DebugCropRowId );
+}
+
+void AFarmPlayerController::Debug_SelectSeed( FName SeedRowId )
+{
+    UFarmSeedSubsystem* SeedSubsystem = GetGameInstance()->GetSubsystem< UFarmSeedSubsystem >();
+    if ( !SeedSubsystem )
+        return;
+    
+    const FSeedItemRow* SeedData = SeedSubsystem->GetSeedData( SeedRowId );
+    if ( !SeedData )
+    {
+        UE_LOG( LogTemp, Warning, TEXT( "[Debug] SeedRowId %s not found" ), *SeedRowId.ToString() );
+        return;
+    }
 }
 
 AFarmPlot* AFarmPlayerController::GetHoveredPlot() const
