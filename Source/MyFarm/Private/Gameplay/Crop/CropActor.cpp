@@ -79,7 +79,7 @@ void ACropActor::ApplyStageVisuals( ECropGrowthStage Stage )
         UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld(), Visual->EnterStageFX, GetActorLocation() );
 }
 
-void ACropActor::TryHarvest()
+void ACropActor::TryHarvest( )
 {
     if ( !CropInstance )
     {
