@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Public/UI/Inventory/InventoryItemViewData.h"
 #include "FarmInventorySubsystem.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnInventoryChanged );
@@ -32,15 +33,21 @@ public:
     // Check if has enough items
     UFUNCTION( BlueprintPure, Category = "Inventory" )
     bool HasItem( FName ItemRowId, int32 RequiredAmount = 1 ) const;
-    
+
+    UFUNCTION( BlueprintCallable, Category = "Inventory" )
+    void GetAllItems( TArray< FInventoryItemViewData >& OutItems ) const;
+
+    UFUNCTION( BlueprintCallable, Category = "Inventory" )
+    const TMap< FName, int32 >& GetAllSeeds() const;
+
     // Debug helper
     UFUNCTION( BlueprintCallable, Category = "Inventory|Debug" )
-    void Debug_AddItem(FName ItemRowId, int32 Amount);
-    
+    void Debug_AddItem( FName ItemRowId, int32 Amount );
+
 public:
     UPROPERTY( BlueprintAssignable, Category = "Inventory" )
     FOnInventoryChanged OnInventoryChanged;
-    
+
 private:
     // ItemRowId -> Count
     UPROPERTY()

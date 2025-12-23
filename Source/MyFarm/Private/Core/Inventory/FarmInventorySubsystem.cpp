@@ -46,8 +46,24 @@ bool UFarmInventorySubsystem::HasItem( FName ItemRowId, int32 RequiredAmount ) c
     return GetItemCount( ItemRowId ) >= RequiredAmount;
 }
 
+void UFarmInventorySubsystem::GetAllItems( TArray< FInventoryItemViewData >& OutItems ) const
+{
+    OutItems.Reset();
+    for ( const auto& Pair : InventoryItems )
+    {
+        FInventoryItemViewData Item;
+        Item.ItemRowId = Pair.Key;
+        Item.Quantity = Pair.Value;
+        OutItems.Add( Item );
+    }
+}
+
+const TMap< FName, int32 >& UFarmInventorySubsystem::GetAllSeeds() const
+{
+    return InventoryItems;
+}
+
 void UFarmInventorySubsystem::Debug_AddItem( FName ItemRowId, int32 Amount )
 {
     AddItem( ItemRowId, Amount );
 }
-
