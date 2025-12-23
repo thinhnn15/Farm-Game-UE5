@@ -8,9 +8,14 @@
 #include "Engine/LocalPlayer.h"
 #include "EngineUtils.h"
 #include "Core/Data/FarmSeedSubsystem.h"
+#include "Core/Inventory/FarmInventorySubsystem.h"
 #include "Gameplay/Farm/FarmPlot.h"
 #include "Public/Core/Time/FarmTimeSubsystem.h"
 #include "Public/Gameplay/Crop/CropActor.h"
+
+AFarmPlayerController::AFarmPlayerController()
+{
+}
 
 void AFarmPlayerController::SetupInputComponent()
 {
@@ -53,6 +58,13 @@ void AFarmPlayerController::BeginPlay()
     FInputModeGameAndUI InputMode;
     InputMode.SetHideCursorDuringCapture( false );
     SetInputMode( InputMode );
+    UGameInstance* GI = GetGameInstance();
+    if ( !GI )
+        return;
+    UFarmInventorySubsystem* Inventory = GI->GetSubsystem< UFarmInventorySubsystem >();
+    if ( !Inventory )
+        return;
+    Inventory->AddItem( "Seed_Carrot", 10 );
 }
 
 void AFarmPlayerController::Debug_NextDay()
@@ -76,20 +88,35 @@ void AFarmPlayerController::Debug_Harvest()
         UE_LOG( LogTemp, Log, TEXT( "[Debug] No Plot found" ) );
         return;
     }
-    
+
     Plot->TryHarvest();
 }
 
 void AFarmPlayerController::Debug_PlantCrop()
 {
-    AFarmPlot* Plot = GetHoveredPlot();
-    if ( !Plot )
+    UGameInstance* GI = GetGameInstance();
+    if ( !GI )
+        return;
+
+    UFarmInventorySubsystem* Inventory = GI->GetSubsystem< UFarmInventorySubsystem >();
+    if ( !Inventory )
+        return;
+
+    if ( !Inventory->HasItem( "Seed_Carrot", 1 ) )
     {
-        UE_LOG( LogTemp, Log, TEXT( "[Debug] No Plot found" ) );
+        UE_LOG( LogTemp, Warning, TEXT("[Debug] Not enough seeds of Seed_Carrot to plant.") );
         return;
     }
-    
-    Plot->PlantCrop( DebugCropRowId );
+
+    // Raycast -> FarmPlot
+    AFarmPlot* Plot = GetHoveredPlot();
+    if ( !Plot )
+        return;
+
+    if ( Plot->PlantCrop( "Carrot" ) )
+    {
+        Inventory->RemoveItem( "Seed_Carrot", 1 );
+    }
 }
 
 void AFarmPlayerController::Debug_SelectSeed( FName SeedRowId )
@@ -97,7 +124,7 @@ void AFarmPlayerController::Debug_SelectSeed( FName SeedRowId )
     UFarmSeedSubsystem* SeedSubsystem = GetGameInstance()->GetSubsystem< UFarmSeedSubsystem >();
     if ( !SeedSubsystem )
         return;
-    
+
     const FSeedItemRow* SeedData = SeedSubsystem->GetSeedData( SeedRowId );
     if ( !SeedData )
     {

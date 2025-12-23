@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Gameplay/Inventory/InventoryComponent.h"
 #include "FarmPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -15,7 +16,8 @@ UCLASS()
 class MYFARM_API AFarmPlayerController : public APlayerController
 {
     GENERATED_BODY()
-
+public:
+    AFarmPlayerController();
 protected:
     virtual void SetupInputComponent() override;
     virtual void BeginPlay() override;
@@ -38,9 +40,15 @@ protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > PlantCropAction;
 
+    // UPROPERTY( VisibleAnywhere, BlueprintReadOnly )
+    // TObjectPtr< UInventoryComponent > Inventory;        // TNN-TODO
+
     // Debug Data
     UPROPERTY( EditDefaultsOnly, Category = "Debug" )
     FName DebugCropRowId;
+    
+    UPROPERTY( EditDefaultsOnly, Category = "Debug" )
+    FName SelectedSeedRowId;
 
 private:
     AFarmPlot* GetHoveredPlot() const;
