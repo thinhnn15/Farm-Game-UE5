@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 class UCropTypeData;
+class AFarmPlot;
 
 UCLASS()
 class MYFARM_API AFarmPlayerController : public APlayerController
@@ -32,10 +33,14 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > HarvestAction;
-    
+
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > PlantCropAction;
 
-    UPROPERTY( EditDefaultsOnly, Category="Debug" )
-    TObjectPtr< UCropTypeData > DebugSeedType;
+    // Debug Data
+    UPROPERTY( EditDefaultsOnly, Category = "Debug" )
+    FName DebugCropRowId;
+
+private:
+    AFarmPlot* GetHoveredPlot() const;
 };

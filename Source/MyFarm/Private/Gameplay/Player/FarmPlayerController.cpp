@@ -44,11 +44,11 @@ void AFarmPlayerController::SetupInputComponent()
 void AFarmPlayerController::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     bShowMouseCursor = true;
     bEnableClickEvents = true;
     bEnableMouseOverEvents = true;
-    
+
     FInputModeGameAndUI InputMode;
     InputMode.SetHideCursorDuringCapture( false );
     SetInputMode( InputMode );
@@ -69,34 +69,34 @@ void AFarmPlayerController::Debug_NextDay()
 
 void AFarmPlayerController::Debug_Harvest()
 {
-    UWorld* World = GetWorld();
-    if ( !World )
-        return;
-
-    // Debug: find the first CropActor in level
-    for ( TActorIterator< ACropActor > It( World ); It; ++It )
+    AFarmPlot* Plot = GetHoveredPlot();
+    if ( !Plot )
     {
-        ACropActor* CropActor = *It;
-        if ( CropActor )
-        {
-            UE_LOG( LogTemp, Log, TEXT( "[Debug] TryHarvest()" ) );
-            CropActor->TryHarvest();
-            return;;
-        }
+        UE_LOG( LogTemp, Log, TEXT( "[Debug] No Plot found" ) );
+        return;
     }
-    UE_LOG( LogTemp, Warning, TEXT( "[Debug] No CropActor found in level" ) );
+    
+    Plot->TryHarvest();
 }
 
 void AFarmPlayerController::Debug_PlantCrop()
 {
+    AFarmPlot* Plot = GetHoveredPlot();
+    if ( !Plot )
+    {
+        UE_LOG( LogTemp, Log, TEXT( "[Debug] No Plot found" ) );
+        return;
+    }
+    
+    Plot->PlantCrop( DebugCropRowId );
+}
+
+AFarmPlot* AFarmPlayerController::GetHoveredPlot() const
+{
     FHitResult Hit;
     GetHitResultUnderCursor( ECC_Visibility, false, Hit );
     if ( !Hit.bBlockingHit )
-        return;
+        return nullptr;
 
-    AFarmPlot* Plot = Cast< AFarmPlot >( Hit.GetActor() );
-    if ( !Plot )
-        return;
-
-    Plot->PlantCrop( DebugSeedType );
+    return Cast< AFarmPlot >( Hit.GetActor() );
 }

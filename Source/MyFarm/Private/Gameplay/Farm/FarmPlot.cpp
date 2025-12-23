@@ -41,9 +41,9 @@ bool AFarmPlot::CanPlant() const
     return CropInstance == nullptr;
 }
 
-bool AFarmPlot::PlantCrop( UCropTypeData* CropType )
+bool AFarmPlot::PlantCrop( FName CropRowId )
 {
-    if ( !CropType || !CanPlant() || !CropActorClass )
+    if ( CropRowId.IsNone() || !CanPlant() || !CropActorClass )
     {
         UE_LOG( LogTemp, Warning, TEXT("[FarmPlot] Cannot plant crop.") );
         return false;
@@ -51,7 +51,7 @@ bool AFarmPlot::PlantCrop( UCropTypeData* CropType )
     ClearCrop();
     // Create Crop Instance (logic)
     CropInstance = NewObject< UCropInstance >( GetGameInstance() );
-    CropInstance->Init( CropType );
+    CropInstance->Init( CropRowId );
 
     // Spawn Crop Actor (visual)
     FActorSpawnParameters Params;
@@ -76,7 +76,7 @@ bool AFarmPlot::PlantCrop( UCropTypeData* CropType )
 
     // Bind logic -> visual
     CropActor->BindCropInstance( CropInstance );
-    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Planted crop: %s"), *GetNameSafe(CropType) );
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Planted crop row: %s"), *CropRowId.ToString() );
     return true;
 }
 
@@ -97,21 +97,18 @@ void AFarmPlot::ClearCrop()
 
 bool AFarmPlot::TryHarvest()
 {
-    if ( !CropInstance )
+    if ( !CropInstance || !CropInstance->CanHarvest() )
         return false;
 
     if ( !CropInstance->TryHarvest() )
         return false;
 
-    // Cleanup visual
-    if ( CropActor )
+    // If crop is not regrowable → clear plot
+    if ( !CropInstance->IsAlive() )
     {
-        CropActor->Destroy();
-        CropActor = nullptr;
+        ClearCrop();
     }
-    // Cleanup logic
-    CropInstance = nullptr;
 
-    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Crop harvested successfully.") );
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Crop harvested.") );
     return true;
 }

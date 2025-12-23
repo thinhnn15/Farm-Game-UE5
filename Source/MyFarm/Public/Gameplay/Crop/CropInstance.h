@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Public/Gameplay/Instance/GameplayInstanceBase.h"
 #include "Public/Core/Time/DayAdvanceListener.h"
-#include "Public/Data/CropTypeData.h"
+#include "Public/Data/CropTypeRow.h"
 #include "Public/Gameplay/Crop/CropGrowthStage.h"
 #include "CropInstance.generated.h"
 
@@ -29,7 +29,7 @@ public:
     UFUNCTION( BlueprintCallable, Category = "Crop" )
     bool TryHarvest();
     /*------------- Lifecycle -------------*/
-    void Init( UCropTypeData* InCropTypeData );
+    void Init( FName InCropRowId );
     virtual void OnInitialize() override;
     virtual void OnDeinitialize() override;
     /*------------- Time -------------*/
@@ -38,7 +38,10 @@ public:
 
     /*------------- Stage -------------*/
     ECropGrowthStage GetCurrentStage() const;
-    UCropTypeData* GetCropData() const;
+    const FCropTypeRow* GetCropData() const;
+    
+    UFUNCTION( BlueprintCallable, Category = "Crop" )
+    bool IsAlive() const;
     
     /*------------- Harvest -------------*/
     bool CanHarvest() const;
@@ -50,7 +53,9 @@ protected:
     
 protected:
     UPROPERTY()
-    TObjectPtr< UCropTypeData > CropData;
+    FName CropRowId;
+    
+    const FCropTypeRow* CropData;
 
     UPROPERTY()
     int32 DaysGrown = 0;

@@ -33,9 +33,15 @@ void ACropActor::BindCropInstance( UCropInstance* InCropInstance )
 
     CropInstance = InCropInstance;
 
-    if ( UCropTypeData* CropType = CropInstance->GetCropData() )
-        CropVisualData = CropType->GetVisualData();
+    const FCropTypeRow* CropData = CropInstance->GetCropData();
+    if ( !CropData )
+        return;
 
+    CropVisualData = CropData->CropVisualData;
+    if (!CropVisualData)
+    {
+        UE_LOG(LogTemp, Warning, TEXT( "[CropActor] CropVisualData is null" ) );
+    }
     // Bind to stage change event
     CropInstance->OnStageChanged.AddDynamic( this, &ACropActor::OnCropStageChanged );
     CropInstance->OnHarvested.AddDynamic( this, &ACropActor::OnCropHarvested );

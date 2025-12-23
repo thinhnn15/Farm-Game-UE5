@@ -25,7 +25,7 @@ public:
 
     // Plant a crop into this plot
     UFUNCTION( BlueprintCallable, Category = "Farm" )
-    bool PlantCrop( UCropTypeData* CropType );
+    bool PlantCrop( FName CropRowId );
 
     void ClearCrop();
 
