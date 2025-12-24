@@ -161,7 +161,7 @@ void AFarmPlayerController::Debug_ToggleInventory()
         UE_LOG( LogTemp, Log, TEXT( "[Debug] Inventory Click" ) );
         return;
     }
-    InventoryWidget->RemoveFromViewport();
+    InventoryWidget->RemoveFromParent();
     InventoryWidget = nullptr;
 
     // Hide mouse

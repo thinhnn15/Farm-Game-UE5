@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Gameplay/Inventory/InventoryComponent.h"
 #include "UI/Inventory/SeedItemEntryWidget.h"
 #include "UI/Inventory/InventoryWidget.h"
 #include "FarmPlayerController.generated.h"
