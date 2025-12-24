@@ -30,7 +30,7 @@ protected:
 
     void Debug_NextDay();
     void Debug_Harvest();
-    void Debug_PlantCrop();
+    void TryPlant();
     void Debug_SelectSeed( FName SeedRowId );
     void Debug_ToggleInventory();
 

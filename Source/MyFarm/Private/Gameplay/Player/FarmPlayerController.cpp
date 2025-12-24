@@ -54,7 +54,7 @@ void AFarmPlayerController::SetupInputComponent()
     ensure( HarvestAction );
     EnhancedInputComponent->BindAction( HarvestAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_Harvest );
     ensure( PlantCropAction );
-    EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_PlantCrop );
+    EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::TryPlant );
     ensure( ToggleInventoryAction );
     EnhancedInputComponent->BindAction( ToggleInventoryAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_ToggleInventory );
 }
@@ -108,7 +108,7 @@ void AFarmPlayerController::Debug_Harvest()
     Plot->TryHarvest();
 }
 
-void AFarmPlayerController::Debug_PlantCrop()
+void AFarmPlayerController::TryPlant()
 {
     if ( !PlayerInventory )
         return;
