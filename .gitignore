@@ -12,6 +12,7 @@ Content/__ExternalObjects__/
 
 # Ignore Visual Studio files
 .vscode/
+.vs/
 *.VC.db
 *.VC.opendb
 *.suo

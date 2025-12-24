@@ -10,8 +10,10 @@
 
 void UInventoryWidget::RefreshInventory()
 {
-    check( VB_InventoryList );
-    VB_InventoryList->ClearChildren();
+    if ( !VBSeedList || !InventorySubsystem )
+        return;
+
+    VBSeedList->ClearChildren();
     SeedItemWidgets.Empty();
 
     const TMap< FName, int32 >& Items = InventorySubsystem->GetAllSeeds();
@@ -22,19 +24,37 @@ void UInventoryWidget::RefreshInventory()
 
         if ( Count <= 0 )
             continue;
-
+        // UTextBlock* DebugText = NewObject< UTextBlock >( this );
+        // if ( !DebugText )
+        //     continue;
+        //
+        // DebugText->SetText(
+        //     FText::FromString(
+        //         FString::Printf( TEXT( "Seed: %s | Count: %d" ),
+        //                          *SeedRowId.ToString(), Count )
+        //     )
+        // );
+        //
+        // DebugText->SetColorAndOpacity( FSlateColor( FLinearColor::Yellow ) );
+        // // DebugText->SetFont( FSlateFontInfo(
+        // //     FCoreStyle::GetDefaultFont(), 16
+        // // ) );
+        //
+        // VBSeedList->AddChildToVerticalBox( DebugText );
+        
+        
         USeedItemEntryWidget* Entry = CreateWidget< USeedItemEntryWidget >( this, SeedItemEntryWidgetClass );
         if ( !Entry )
             continue;
-
+        
         Entry->Setup( SeedRowId, Count );
         Entry->OnSeedItemClicked.AddUObject( this, &UInventoryWidget::HandleSeedSelected );
-
-        VB_InventoryList->AddChild( Entry );
+        
+        VBSeedList->AddChildToVerticalBox(Entry);
         SeedItemWidgets.Add( SeedRowId, Entry );
     }
 
-    Txt_SelectedSeed->SetText( FText::FromString( "Selected: None" ) );
+    TxtSelectedSeed->SetText( FText::FromString( "Selected: None" ) );
     SelectedSeedRowId = NAME_None;
 }
 
@@ -65,7 +85,7 @@ void UInventoryWidget::HandleSeedSelected( FName SeedRowId )
         Item.Value->SetSelected( Item.Key == SeedRowId );
     }
 
-    Txt_SelectedSeed->SetText( FText::FromString(
+    TxtSelectedSeed->SetText( FText::FromString(
         FString::Printf( TEXT( "Selected: %s" ), *SeedRowId.ToString() )
     ) );
 

@@ -33,10 +33,10 @@ protected:
 protected:
     // BindWidget
     UPROPERTY( meta = ( BindWidget ) )
-    TObjectPtr< UVerticalBox > VB_InventoryList;
+    TObjectPtr< UVerticalBox > VBSeedList;
 
     UPROPERTY( meta = ( BindWidget ) )
-    TObjectPtr< UTextBlock > Txt_SelectedSeed;
+    TObjectPtr< UTextBlock > TxtSelectedSeed;
 
     // Config
     UPROPERTY( EditDefaultsOnly, Category="Inventory|UI" )

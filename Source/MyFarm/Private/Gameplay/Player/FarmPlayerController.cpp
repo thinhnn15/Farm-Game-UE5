@@ -67,6 +67,7 @@ void AFarmPlayerController::BeginPlay()
     if ( !Inventory )
         return;
     Inventory->AddItem( "Seed_Carrot", 10 );
+    Inventory->AddItem( "Seed_Wheat", 5 );
 }
 
 void AFarmPlayerController::Debug_NextDay()
