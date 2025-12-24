@@ -112,3 +112,23 @@ bool AFarmPlot::TryHarvest()
     UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Crop harvested.") );
     return true;
 }
+
+void AFarmPlot::Water()
+{
+    if ( !bIsTilled )
+    {
+        UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Water: Cannot water before tilling.") );
+        return;
+    }
+
+    // Prevent watering multiple times a day
+    if ( bIsWatered )
+    {
+        UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Water: Already watered.") );
+        return;
+    }
+    bIsWatered = true;
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Plot watered.") );
+
+    // TODO: Trigger visual feedback (particles, material change, etc.)
+}

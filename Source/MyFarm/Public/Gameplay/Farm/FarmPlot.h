@@ -32,6 +32,9 @@ public:
     // Try to harvest the crop in this plot
     UFUNCTION( BlueprintCallable, Category = "Farm" )
     bool TryHarvest();
+    
+    // Water this plot if possible
+    void Water();
 
 protected:
     virtual void BeginPlay() override;
@@ -45,6 +48,12 @@ protected:
     // Logic
     UPROPERTY()
     TObjectPtr< UCropInstance > CropInstance;
+    
+    UPROPERTY()
+    bool bIsTilled = false;
+    
+    UPROPERTY()
+    bool bIsWatered = false;
 
     // Visual
     UPROPERTY()

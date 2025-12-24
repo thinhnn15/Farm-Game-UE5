@@ -13,6 +13,7 @@ class UInputMappingContext;
 class UInputAction;
 class UCropTypeData;
 class AFarmPlot;
+class UToolBase;
 
 UCLASS()
 class MYFARM_API AFarmPlayerController : public APlayerController
@@ -21,8 +22,9 @@ class MYFARM_API AFarmPlayerController : public APlayerController
 
 public:
     AFarmPlayerController();
-
     void OnSeedSelected( FName SeedRowId );
+    // Sets the currently equipped tool
+    void SetCurrentTool( UToolBase* NewTool );
 
 protected:
     virtual void SetupInputComponent() override;
@@ -33,6 +35,9 @@ protected:
     void TryPlant();
     void Debug_SelectSeed( FName SeedRowId );
     void Debug_ToggleInventory();
+    void UseTool();
+
+    AActor* GetHoveredActor() const;
 
 protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
@@ -68,4 +73,7 @@ protected:
 
 private:
     AFarmPlot* GetHoveredPlot() const;
+
+    UPROPERTY()
+    TObjectPtr< UToolBase > CurrentTool;
 };

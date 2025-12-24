@@ -10,6 +10,7 @@
 #include "Core/Data/FarmSeedSubsystem.h"
 #include "Core/Inventory/FarmInventorySubsystem.h"
 #include "Gameplay/Farm/FarmPlot.h"
+#include "Gameplay/Tool/ToolBase.h"
 #include "Public/Core/Time/FarmTimeSubsystem.h"
 #include "Public/Gameplay/Crop/CropActor.h"
 
@@ -25,6 +26,11 @@ void AFarmPlayerController::OnSeedSelected( FName SeedRowId )
 
     // Store the selected seed into gameplay inventory
     PlayerInventory->SetSelectedSeed( SeedRowId );
+}
+
+void AFarmPlayerController::SetCurrentTool( UToolBase* NewTool )
+{
+    CurrentTool = NewTool;
 }
 
 void AFarmPlayerController::SetupInputComponent()
@@ -57,6 +63,7 @@ void AFarmPlayerController::SetupInputComponent()
     EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::TryPlant );
     ensure( ToggleInventoryAction );
     EnhancedInputComponent->BindAction( ToggleInventoryAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_ToggleInventory );
+    // TODO
 }
 
 void AFarmPlayerController::BeginPlay()
@@ -115,7 +122,7 @@ void AFarmPlayerController::TryPlant()
 
     if ( !PlayerInventory->HasSeed() )
         return;
-    
+
     // Raycast -> FarmPlot
     AFarmPlot* Plot = GetHoveredPlot();
     if ( !Plot )
@@ -123,7 +130,7 @@ void AFarmPlayerController::TryPlant()
 
     // Get the selected crop row id from inventory
     const FName CropRowId = PlayerInventory->GetSelectedSeed();
-    
+
     if ( Plot->PlantCrop( CropRowId ) )
     {
         PlayerInventory->ConsumeSeed();
@@ -177,6 +184,30 @@ void AFarmPlayerController::Debug_ToggleInventory()
     SetInputMode( FInputModeGameOnly() );
 
     UE_LOG( LogTemp, Log, TEXT( "[Debug] Inventory Click" ) );
+}
+
+void AFarmPlayerController::UseTool()
+{
+    if ( !CurrentTool )
+        return;
+
+    AActor* TargetActor = GetHoveredActor();
+    if ( !TargetActor )
+        return;
+
+    if ( !CurrentTool->CanUseOnActor( TargetActor ) )
+        return;
+
+    CurrentTool->UseOnActor( TargetActor );
+}
+
+AActor* AFarmPlayerController::GetHoveredActor() const
+{
+    FHitResult Hit;
+    GetHitResultUnderCursor( ECC_Visibility, false, Hit );
+    if ( !Hit.bBlockingHit )
+        return nullptr;
+    return Hit.GetActor();
 }
 
 AFarmPlot* AFarmPlayerController::GetHoveredPlot() const
