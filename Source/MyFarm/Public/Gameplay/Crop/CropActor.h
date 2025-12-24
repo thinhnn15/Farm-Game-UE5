@@ -21,10 +21,6 @@ public:
 
     // Bind this actor ro a crop instance
     void BindCropInstance( UCropInstance* InCropInstance );
-
-    // Try harvest
-    UFUNCTION( BlueprintCallable, Category = "Crop" )
-    void TryHarvest();
 protected:
     virtual void BeginPlay() override;
 
