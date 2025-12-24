@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Public/Gameplay/Inventory/PlayerInventory.h"
 #include "UI/Inventory/SeedItemEntryWidget.h"
 #include "UI/Inventory/InventoryWidget.h"
 #include "FarmPlayerController.generated.h"
@@ -20,6 +21,8 @@ class MYFARM_API AFarmPlayerController : public APlayerController
 
 public:
     AFarmPlayerController();
+
+    void OnSeedSelected( FName SeedRowId );
 
 protected:
     virtual void SetupInputComponent() override;
@@ -43,12 +46,12 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > PlantCropAction;
-    
+
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > ToggleInventoryAction;
 
-    // UPROPERTY( VisibleAnywhere, BlueprintReadOnly )
-    // TObjectPtr< UInventoryComponent > Inventory;        // TNN-TODO
+    UPROPERTY()
+    TObjectPtr< UPlayerInventory > PlayerInventory;
 
     // Debug Data
     UPROPERTY( EditDefaultsOnly, Category = "Debug" )

@@ -7,6 +7,7 @@
 #include "UI/Inventory/SeedItemEntryWidget.h"
 #include "Core/Data/FarmSeedSubsystem.h"
 #include "Engine/GameEngine.h"
+#include "Gameplay/Player/FarmPlayerController.h"
 
 void UInventoryWidget::RefreshInventory()
 {
@@ -24,33 +25,15 @@ void UInventoryWidget::RefreshInventory()
 
         if ( Count <= 0 )
             continue;
-        // UTextBlock* DebugText = NewObject< UTextBlock >( this );
-        // if ( !DebugText )
-        //     continue;
-        //
-        // DebugText->SetText(
-        //     FText::FromString(
-        //         FString::Printf( TEXT( "Seed: %s | Count: %d" ),
-        //                          *SeedRowId.ToString(), Count )
-        //     )
-        // );
-        //
-        // DebugText->SetColorAndOpacity( FSlateColor( FLinearColor::Yellow ) );
-        // // DebugText->SetFont( FSlateFontInfo(
-        // //     FCoreStyle::GetDefaultFont(), 16
-        // // ) );
-        //
-        // VBSeedList->AddChildToVerticalBox( DebugText );
-        
         
         USeedItemEntryWidget* Entry = CreateWidget< USeedItemEntryWidget >( this, SeedItemEntryWidgetClass );
         if ( !Entry )
             continue;
-        
+
         Entry->Setup( SeedRowId, Count );
         Entry->OnSeedItemClicked.AddUObject( this, &UInventoryWidget::HandleSeedSelected );
-        
-        VBSeedList->AddChildToVerticalBox(Entry);
+
+        VBSeedList->AddChildToVerticalBox( Entry );
         SeedItemWidgets.Add( SeedRowId, Entry );
     }
 
@@ -85,9 +68,21 @@ void UInventoryWidget::HandleSeedSelected( FName SeedRowId )
         Item.Value->SetSelected( Item.Key == SeedRowId );
     }
 
-    TxtSelectedSeed->SetText( FText::FromString(
-        FString::Printf( TEXT( "Selected: %s" ), *SeedRowId.ToString() )
-    ) );
+    if ( TxtSelectedSeed )
+    {
+        TxtSelectedSeed->SetText( FText::FromString(
+            FString::Printf( TEXT( "Selected: %s" ), *SeedRowId.ToString() )
+        ) );
+    }
 
     UE_LOG( LogTemp, Log, TEXT("[InventoryWidget] Selected seed: %s"), *SeedRowId.ToString() );
+    APlayerController* PC = GetOwningPlayer();
+    if ( !PC )
+        return;
+    
+    AFarmPlayerController* FarmPC = Cast< AFarmPlayerController >( PC );
+    if ( !FarmPC )
+        return;
+    
+    FarmPC->OnSeedSelected( SeedRowId );
 }

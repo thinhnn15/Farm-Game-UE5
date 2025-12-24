@@ -17,6 +17,16 @@ AFarmPlayerController::AFarmPlayerController()
 {
 }
 
+void AFarmPlayerController::OnSeedSelected( FName SeedRowId )
+{
+    UE_LOG( LogTemp, Warning, TEXT( "[Debug] Selected Seed: %s" ), *SeedRowId.ToString() );
+    if ( !PlayerInventory )
+        return;
+
+    // Store the selected seed into gameplay inventory
+    PlayerInventory->SetSelectedSeed( SeedRowId );
+}
+
 void AFarmPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
@@ -63,11 +73,14 @@ void AFarmPlayerController::BeginPlay()
     UGameInstance* GI = GetGameInstance();
     if ( !GI )
         return;
+    // Create the gameplay inventory for this player
+    PlayerInventory = NewObject< UPlayerInventory >( this );
+
     UFarmInventorySubsystem* Inventory = GI->GetSubsystem< UFarmInventorySubsystem >();
     if ( !Inventory )
         return;
-    Inventory->AddItem( "Seed_Carrot", 10 );
-    Inventory->AddItem( "Seed_Wheat", 5 );
+    Inventory->AddItem( "Carrot", 10 );
+    Inventory->AddItem( "Wheat", 5 );
 }
 
 void AFarmPlayerController::Debug_NextDay()
@@ -97,28 +110,23 @@ void AFarmPlayerController::Debug_Harvest()
 
 void AFarmPlayerController::Debug_PlantCrop()
 {
-    UGameInstance* GI = GetGameInstance();
-    if ( !GI )
+    if ( !PlayerInventory )
         return;
 
-    UFarmInventorySubsystem* Inventory = GI->GetSubsystem< UFarmInventorySubsystem >();
-    if ( !Inventory )
+    if ( !PlayerInventory->HasSeed() )
         return;
-
-    if ( !Inventory->HasItem( "Seed_Carrot", 1 ) )
-    {
-        UE_LOG( LogTemp, Warning, TEXT("[Debug] Not enough seeds of Seed_Carrot to plant.") );
-        return;
-    }
-
+    
     // Raycast -> FarmPlot
     AFarmPlot* Plot = GetHoveredPlot();
     if ( !Plot )
         return;
 
-    if ( Plot->PlantCrop( "Carrot" ) )
+    // Get the selected crop row id from inventory
+    const FName CropRowId = PlayerInventory->GetSelectedSeed();
+    
+    if ( Plot->PlantCrop( CropRowId ) )
     {
-        Inventory->RemoveItem( "Seed_Carrot", 1 );
+        PlayerInventory->ConsumeSeed();
     }
 }
 
@@ -150,11 +158,11 @@ void AFarmPlayerController::Debug_ToggleInventory()
         InventoryWidget->AddToViewport();
 
         FInputModeGameAndUI InputMode;
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        InputMode.SetHideCursorDuringCapture(false);
+        InputMode.SetLockMouseToViewportBehavior( EMouseLockMode::DoNotLock );
+        InputMode.SetHideCursorDuringCapture( false );
         // Optional: focus UI
-        InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
-        SetInputMode(InputMode);
+        InputMode.SetWidgetToFocus( InventoryWidget->TakeWidget() );
+        SetInputMode( InputMode );
         // Show mouse
         bShowMouseCursor = true;
 
