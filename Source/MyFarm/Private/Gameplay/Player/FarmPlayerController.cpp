@@ -148,10 +148,15 @@ void AFarmPlayerController::Debug_ToggleInventory()
             return;
 
         InventoryWidget->AddToViewport();
+
+        FInputModeGameAndUI InputMode;
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        InputMode.SetHideCursorDuringCapture(false);
+        // Optional: focus UI
+        InputMode.SetWidgetToFocus(InventoryWidget->TakeWidget());
+        SetInputMode(InputMode);
         // Show mouse
         bShowMouseCursor = true;
-
-        SetInputMode( FInputModeUIOnly() );
 
         UE_LOG( LogTemp, Log, TEXT( "[Debug] Inventory Click" ) );
         return;
