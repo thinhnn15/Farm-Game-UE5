@@ -36,6 +36,7 @@ protected:
     void Debug_SelectSeed( FName SeedRowId );
     void Debug_ToggleInventory();
     void UseTool();
+    void EquipWateringTool();
 
     AActor* GetHoveredActor() const;
 
@@ -55,6 +56,12 @@ protected:
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > ToggleInventoryAction;
 
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > UseWaterToolAction;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > UseToolAction;
+    
     UPROPERTY()
     TObjectPtr< UPlayerInventory > PlayerInventory;
 

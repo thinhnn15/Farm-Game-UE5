@@ -11,6 +11,7 @@
 #include "Core/Inventory/FarmInventorySubsystem.h"
 #include "Gameplay/Farm/FarmPlot.h"
 #include "Gameplay/Tool/ToolBase.h"
+#include "Gameplay/Tool/WateringTool.h"
 #include "Public/Core/Time/FarmTimeSubsystem.h"
 #include "Public/Gameplay/Crop/CropActor.h"
 
@@ -63,7 +64,10 @@ void AFarmPlayerController::SetupInputComponent()
     EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::TryPlant );
     ensure( ToggleInventoryAction );
     EnhancedInputComponent->BindAction( ToggleInventoryAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_ToggleInventory );
-    // TODO
+    ensure( UseWaterToolAction );
+    EnhancedInputComponent->BindAction( UseWaterToolAction, ETriggerEvent::Started, this, &AFarmPlayerController::EquipWateringTool );
+    ensure( UseToolAction );
+    EnhancedInputComponent->BindAction( UseToolAction, ETriggerEvent::Started, this, &AFarmPlayerController::UseTool );
 }
 
 void AFarmPlayerController::BeginPlay()
@@ -202,11 +206,17 @@ void AFarmPlayerController::UseTool()
     Context.WorldLocation = Hit.bBlockingHit ? Hit.Location : FVector::ZeroVector;
     Context.WorldNormal = Hit.bBlockingHit ? Hit.Normal : FVector::UpVector;
     Context.bIsPrimaryAction = true;
-    
+
     if ( !CurrentTool->CanUse( Context ) )
         return;
 
     CurrentTool->Use( Context );
+}
+
+void AFarmPlayerController::EquipWateringTool()
+{
+    UWateringTool* WateringTool = NewObject< UWateringTool >( this );
+    SetCurrentTool( WateringTool );
 }
 
 AActor* AFarmPlayerController::GetHoveredActor() const
