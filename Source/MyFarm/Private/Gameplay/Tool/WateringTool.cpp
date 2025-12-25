@@ -2,24 +2,24 @@
 
 
 #include "Gameplay/Tool/WateringTool.h"
-
+#include "Gameplay/Tool/ToolUseContext.h"
 #include "Gameplay/Farm/FarmPlot.h"
 
-bool UWateringTool::CanUseOnActor( AActor* TargetActor ) const
+bool UWateringTool::CanUse( const FToolUseContext& UseContext ) const
 {
-    if ( !TargetActor )
+    if ( !UseContext.TargetActor )
         return false;
-    // Watering tool can only be used on FarmPlot
-    return Cast< AFarmPlot >( TargetActor ) != nullptr;
+
+    return Cast< AFarmPlot >( UseContext.TargetActor ) != nullptr;
 }
 
-void UWateringTool::UseOnActor( AActor* TargetActor )
+void UWateringTool::Use( const FToolUseContext& Context )
 {
-    AFarmPlot* FarmPlot = Cast< AFarmPlot >( TargetActor );
-    if ( !FarmPlot )
+    if ( Context.TargetActor )
+        return;
+    AFarmPlot* Plot = Cast< AFarmPlot >( Context.TargetActor );
+    if ( !Plot )
         return;
     
-    UE_LOG( LogTemp, Log, TEXT( "[WateringTool] Used watering tool on FarmPlot: %s" ), *FarmPlot->GetName() );
-    // Delegate watering logic to the farm plot
-    FarmPlot->Water();
+    Plot->Water();
 }

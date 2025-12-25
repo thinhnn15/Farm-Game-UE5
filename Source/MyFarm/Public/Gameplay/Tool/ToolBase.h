@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Public/Gameplay/Tool/ToolUseContext.h"
 #include "ToolBase.generated.h"
 
 UCLASS( Abstract, Blueprintable )
@@ -12,10 +13,12 @@ class MYFARM_API UToolBase : public UObject
     GENERATED_BODY()
 
 public:
-    virtual bool CanUseOnActor( AActor* TargetActor ) const
-    PURE_VIRTUAL( UToolBase::CanUseOnActor, return false; );
+    virtual bool CanUse( const FToolUseContext& UseContext ) const
+    {
+        return true;
+    }
 
     // Use this tool on the target actor
-    virtual void UseOnActor( AActor* TargetActor )
+    virtual void Use( const FToolUseContext& Context )
     PURE_VIRTUAL( UToolBase::UseOnActor, );
 };

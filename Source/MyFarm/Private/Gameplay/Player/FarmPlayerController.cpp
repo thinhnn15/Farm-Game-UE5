@@ -191,14 +191,22 @@ void AFarmPlayerController::UseTool()
     if ( !CurrentTool )
         return;
 
-    AActor* TargetActor = GetHoveredActor();
-    if ( !TargetActor )
+    FHitResult Hit;
+    GetHitResultUnderCursor( ECC_Visibility, false, Hit );
+
+    FToolUseContext Context;
+    Context.InstigatorController = this;
+    Context.InstigatorPawn = GetPawn();
+    Context.TargetActor = Hit.GetActor();
+    Context.HitResult = Hit;
+    Context.WorldLocation = Hit.bBlockingHit ? Hit.Location : FVector::ZeroVector;
+    Context.WorldNormal = Hit.bBlockingHit ? Hit.Normal : FVector::UpVector;
+    Context.bIsPrimaryAction = true;
+    
+    if ( !CurrentTool->CanUse( Context ) )
         return;
 
-    if ( !CurrentTool->CanUseOnActor( TargetActor ) )
-        return;
-
-    CurrentTool->UseOnActor( TargetActor );
+    CurrentTool->Use( Context );
 }
 
 AActor* AFarmPlayerController::GetHoveredActor() const

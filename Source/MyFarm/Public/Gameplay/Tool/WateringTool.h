@@ -15,6 +15,6 @@ class MYFARM_API UWateringTool : public UToolBase
     GENERATED_BODY()
     
 public:
-    virtual bool CanUseOnActor( AActor* TargetActor ) const override;
-    virtual void UseOnActor( AActor* TargetActor ) override;
+    virtual bool CanUse(const FToolUseContext& UseContext) const override;
+    virtual void Use(const FToolUseContext& Context) override;
 };

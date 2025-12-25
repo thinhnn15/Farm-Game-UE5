@@ -1,4 +1,4 @@
-﻿#include "Public/Gameplay/FarmGameMode.h"
+#include "Public/Gameplay/FarmGameMode.h"
 
 AFarmGameMode::AFarmGameMode()
 {
