@@ -7,56 +7,75 @@
 #include "Components/Widget.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+static FText GetMenuItemText( EFarmMainMenuItem MenuItem )
+{
+    const UEnum* Enum = StaticEnum< EFarmMainMenuItem >();
+    if ( !Enum )
+        return FText::FromString( "Unknown" );
+
+    return Enum->GetDisplayNameTextByValue( static_cast< int64 >( MenuItem ) );
+}
+
 void UFarmMainMenuWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    CurrentIndex = 0;
-    const TArray< FText > MenuTexts =
-    {
-        FText::FromString( "Continue" ), FText::FromString( "New Game" ), FText::FromString( "Options" ), FText::FromString( "Exit" )
-    };
+    check( VB_MenuItems );
 
-    for ( int32 i = 0; i < VB_MenuItems->GetChildrenCount(); ++i )
+    VB_MenuItems->ClearChildren();
+    MenuEntries.Empty();
+
+    const UEnum* Enum = StaticEnum< EFarmMainMenuItem >();
+    const int32 NumItems = Enum->NumEnums() - 1; // Exclude _MAX
+    for ( int32 i = 0; i < NumItems; i++ )
     {
-        if ( UFarmMenuEntryWidget* Entry =
-            Cast< UFarmMenuEntryWidget >( VB_MenuItems->GetChildAt( i ) ) )
-        {
-            Entry->SetLabelText( MenuTexts[ i ] );
-        }
+        EFarmMainMenuItem MenuItem = static_cast< EFarmMainMenuItem >( i );
+        UFarmMenuEntryWidget* EntryWidget = CreateWidget< UFarmMenuEntryWidget >( this, MenuEntryWidgetClass );
+        if ( !EntryWidget )
+            continue;
+
+        EntryWidget->SetLabelText( GetMenuItemText( MenuItem ) );
+
+        VB_MenuItems->AddChild( EntryWidget );
+        MenuEntries.Add( EntryWidget );
     }
+
+    CurrentIndex = 0;
     UpdateVisualSelection();
 }
 
 void UFarmMainMenuWidget::MoveSelection( int32 Direction )
 {
-    if ( !VB_MenuItems )
+    if ( MenuEntries.Num() == 0 )
         return;
 
-    const int32 Count = VB_MenuItems->GetChildrenCount();
-    CurrentIndex = FMath::Clamp( CurrentIndex + Direction, 0, Count - 1 );
+    CurrentIndex =
+        ( CurrentIndex + Direction + MenuEntries.Num() ) % MenuEntries.Num();
 
     UpdateVisualSelection();
 }
 
 void UFarmMainMenuWidget::ConfirmSelection()
 {
-    switch ( CurrentIndex )
+    switch ( static_cast< EFarmMainMenuItem >( CurrentIndex ) )
     {
-    case 0: // Continue
-        UE_LOG( LogTemp, Log, TEXT("Continue selected") );
+    case EFarmMainMenuItem::Continue:
+        UE_LOG( LogTemp, Log, TEXT("Continue Game") );
         break;
-    case 1: // New Game
-        UE_LOG( LogTemp, Log, TEXT("Cancel selected") );
+
+    case EFarmMainMenuItem::NewGame:
+        UE_LOG( LogTemp, Log, TEXT("New Game") );
         break;
-    case 2: // Options
-        UE_LOG( LogTemp, Log, TEXT("Confirm selected") );
+
+    case EFarmMainMenuItem::Options:
+        UE_LOG( LogTemp, Log, TEXT("Options") );
         break;
-    case 3: // Exit
-        UKismetSystemLibrary::QuitGame( this, GetOwningPlayer(), EQuitPreference::Quit, false );
+
+    case EFarmMainMenuItem::Exit:
+        UE_LOG( LogTemp, Log, TEXT("Exit Game") );
         break;
+
     default:
-        UE_LOG( LogTemp, Log, TEXT("Invalid selection") );
         break;
     }
 }
@@ -66,11 +85,8 @@ void UFarmMainMenuWidget::UpdateVisualSelection()
     if ( !VB_MenuItems )
         return;
 
-    for ( int32 i = 0; i < VB_MenuItems->GetChildrenCount(); i++ )
+    for ( int32 i = 0; i < MenuEntries.Num(); ++i )
     {
-        if ( UWidget* Child = VB_MenuItems->GetChildAt( i ) )
-        {
-            Child->SetRenderOpacity( i == CurrentIndex ? 1.f : 0.6f );
-        }
+        MenuEntries[ i ]->SetSelected( i == CurrentIndex );
     }
 }

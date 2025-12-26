@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "FarmMenuEntryWidget.h"
 #include "FarmMainMenuWidget.generated.h"
 
 UENUM( BlueprintType )
 enum class EFarmMainMenuItem : uint8
 {
-    Continue
-    , NewGame
-    , Options
-    , Exit
+    Continue UMETA( DisplayName="Continue" )
+    , NewGame UMETA( DisplayName="New Game" )
+    , Options UMETA( DisplayName="Options" )
+    , Exit UMETA( DisplayName="Exit" )
 };
 
 class UVerticalBox;
@@ -29,13 +30,18 @@ public:
     void ConfirmSelection();
 
 protected:
+    void UpdateVisualSelection();
+
+protected:
     UPROPERTY( meta = (BindWidget) )
     TObjectPtr< UVerticalBox > VB_MenuItems;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = "Menu " )
     EFarmMainMenuItem CurrentItem = EFarmMainMenuItem::NewGame;
-    
+
+    UPROPERTY( EditAnywhere, Category = "Menu" )
+    TSubclassOf< UFarmMenuEntryWidget > MenuEntryWidgetClass;
+
+    TArray< TObjectPtr< UFarmMenuEntryWidget > > MenuEntries;
     int32 CurrentIndex = 0;
-    
-    void UpdateVisualSelection();
 };
