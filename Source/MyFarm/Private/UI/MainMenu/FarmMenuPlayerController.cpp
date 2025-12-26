@@ -18,7 +18,11 @@ void AFarmMenuPlayerController::BeginPlay()
     if ( MainMenuWidget )
         MainMenuWidget->AddToViewport();
 
-    SetInputMode( FInputModeUIOnly() );
+    FInputModeGameAndUI InputMode;
+    InputMode.SetHideCursorDuringCapture(true);
+    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+    SetInputMode(InputMode);
     bShowMouseCursor = false;
 
     // Add mapping context
