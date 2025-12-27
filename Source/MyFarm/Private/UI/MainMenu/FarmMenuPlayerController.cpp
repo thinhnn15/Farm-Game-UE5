@@ -15,7 +15,7 @@ void AFarmMenuPlayerController::BeginPlay()
 
     MainMenuWidget = CreateWidget< UFarmMainMenuWidget >( this, MainMenuWidgetClass );
 
-    if ( MainMenuWidget )
+    if ( MainMenuWidget )  
         MainMenuWidget->AddToViewport();
 
     FInputModeGameAndUI InputMode;
@@ -44,7 +44,7 @@ void AFarmMenuPlayerController::SetupInputComponent()
     if ( !EnhancedInput )
         return;
 
-    EnhancedInput->BindAction( IAMenuMoveAction, ETriggerEvent::Triggered, this, &AFarmMenuPlayerController::HandleMenuMove );
+    EnhancedInput->BindAction( IAMenuMoveAction, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuMove );
     EnhancedInput->BindAction( IAConfirmAction, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuConfirm );
 }
 
@@ -57,7 +57,7 @@ void AFarmMenuPlayerController::HandleMenuMove( const FInputActionValue& Value )
     if ( FMath::Abs( AxisValue ) < KINDA_SMALL_NUMBER )
         return;
 
-    const int32 Direction = AxisValue > 0.f ? 1 : 1;
+    const int32 Direction = AxisValue > 0.f ? 1 : -1;
     MainMenuWidget->MoveSelection( Direction );
 }
 

@@ -44,4 +44,7 @@ protected:
 
     TArray< TObjectPtr< UFarmMenuEntryWidget > > MenuEntries;
     int32 CurrentIndex = 0;
+    
+protected:
+    void QuitGame();
 };

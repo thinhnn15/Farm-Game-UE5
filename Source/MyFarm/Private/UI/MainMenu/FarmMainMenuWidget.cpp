@@ -73,6 +73,7 @@ void UFarmMainMenuWidget::ConfirmSelection()
 
     case EFarmMainMenuItem::Exit:
         UE_LOG( LogTemp, Log, TEXT("Exit Game") );
+        QuitGame();
         break;
 
     default:
@@ -89,4 +90,16 @@ void UFarmMainMenuWidget::UpdateVisualSelection()
     {
         MenuEntries[ i ]->SetSelected( i == CurrentIndex );
     }
+}
+
+void UFarmMainMenuWidget::QuitGame()
+{
+    APlayerController* PC = GetOwningPlayer();
+    if ( !PC )
+    {
+        UE_LOG( LogTemp, Error, TEXT("PC is null") );
+        return;
+    }
+    
+    UKismetSystemLibrary::QuitGame( this, PC, EQuitPreference::Quit, false );
 }
