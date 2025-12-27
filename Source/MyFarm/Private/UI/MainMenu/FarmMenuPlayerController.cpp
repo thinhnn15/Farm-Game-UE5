@@ -19,10 +19,10 @@ void AFarmMenuPlayerController::BeginPlay()
         MainMenuWidget->AddToViewport();
 
     FInputModeGameAndUI InputMode;
-    InputMode.SetHideCursorDuringCapture(true);
-    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+    InputMode.SetHideCursorDuringCapture( true );
+    InputMode.SetLockMouseToViewportBehavior( EMouseLockMode::DoNotLock );
 
-    SetInputMode(InputMode);
+    SetInputMode( InputMode );
     bShowMouseCursor = false;
 
     // Add mapping context
@@ -65,7 +65,7 @@ void AFarmMenuPlayerController::HandleMenuConfirm( const FInputActionValue& Valu
 {
     if ( !MainMenuWidget )
         return;
-    
-    if (Value.Get< bool >() )
+
+    if ( Value.Get< bool >() )
         MainMenuWidget->ConfirmSelection();
 }
