@@ -15,7 +15,7 @@ void AFarmMenuPlayerController::BeginPlay()
 
     MainMenuWidget = CreateWidget< UFarmMainMenuWidget >( this, MainMenuWidgetClass );
 
-    if ( MainMenuWidget )  
+    if ( MainMenuWidget )
         MainMenuWidget->AddToViewport();
 
     FInputModeGameAndUI InputMode;
@@ -44,20 +44,26 @@ void AFarmMenuPlayerController::SetupInputComponent()
     if ( !EnhancedInput )
         return;
 
-    EnhancedInput->BindAction( IAMenuMoveAction, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuMove );
+    EnhancedInput->BindAction( IAMenuMoveUp, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuMoveUp );
+    EnhancedInput->BindAction( IAMenuMoveDown, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuMoveDown );
     EnhancedInput->BindAction( IAConfirmAction, ETriggerEvent::Started, this, &AFarmMenuPlayerController::HandleMenuConfirm );
 }
 
-void AFarmMenuPlayerController::HandleMenuMove( const FInputActionValue& Value )
+void AFarmMenuPlayerController::HandleMenuMoveUp()
+{
+    HandleMenuMove( true );
+}
+
+void AFarmMenuPlayerController::HandleMenuMoveDown()
+{
+    HandleMenuMove( false );
+}
+
+void AFarmMenuPlayerController::HandleMenuMove( bool bMoveUp )
 {
     if ( !MainMenuWidget )
         return;
-
-    const float AxisValue = Value.Get< float >();
-    if ( FMath::Abs( AxisValue ) < KINDA_SMALL_NUMBER )
-        return;
-
-    const int32 Direction = AxisValue > 0.f ? 1 : -1;
+    const int32 Direction = bMoveUp ? -1 : 1;
     MainMenuWidget->MoveSelection( Direction );
 }
 

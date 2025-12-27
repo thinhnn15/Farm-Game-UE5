@@ -28,7 +28,10 @@ protected:
     TObjectPtr< UInputMappingContext > MainMenuMappingContext;
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    TObjectPtr< UInputAction > IAMenuMoveAction;
+    TObjectPtr< UInputAction > IAMenuMoveUp;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > IAMenuMoveDown;
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > IAConfirmAction;
@@ -37,6 +40,8 @@ private:
     UPROPERTY()
     UFarmMainMenuWidget* MainMenuWidget;
 
-    void HandleMenuMove( const FInputActionValue& Value );
-    void HandleMenuConfirm(const FInputActionValue& Value );
+    void HandleMenuMoveUp();
+    void HandleMenuMoveDown();
+    void HandleMenuMove( bool bMoveUp );
+    void HandleMenuConfirm( const FInputActionValue& Value );
 };
