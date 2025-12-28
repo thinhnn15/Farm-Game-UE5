@@ -1,27 +1,27 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Gameplay/Tool/WateringTool.h"
-#include "Gameplay/Tool/ToolUseContext.h"
+#include "Gameplay/Tool/HoeTool.h"
+
 #include "Gameplay/Farm/FarmPlot.h"
 
-bool UWateringTool::CanUse( const FToolUseContext& UseContext ) const
+bool UHoeTool::CanUse( const FToolUseContext& UseContext ) const
 {
-    if ( UseContext.TargetActor )
+    if ( !UseContext.HasValidHit() )
         return false;
+
     AFarmPlot* Plot = Cast< AFarmPlot >( UseContext.TargetActor );
     if ( !Plot )
         return false;
-    return Plot->CanBeWatered();
+
+    return Plot->CanBeTilled();
 }
 
-void UWateringTool::Use( const FToolUseContext& Context )
+void UHoeTool::Use( const FToolUseContext& Context )
 {
-    if ( Context.TargetActor )
-        return;
     AFarmPlot* Plot = Cast< AFarmPlot >( Context.TargetActor );
     if ( !Plot )
         return;
-
-    Plot->Water();
+    
+    return Plot->Till();
 }

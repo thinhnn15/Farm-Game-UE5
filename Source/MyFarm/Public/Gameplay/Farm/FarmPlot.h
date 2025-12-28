@@ -32,9 +32,19 @@ public:
     // Try to harvest the crop in this plot
     UFUNCTION( BlueprintCallable, Category = "Farm" )
     bool TryHarvest();
-    
+
     // Water this plot if possible
     void Water();
+    
+    // Can this plot be tilled by hoe tool?
+    bool CanBeTilled() const;
+    void Till();
+    
+    // Can this plot be watered?
+    bool CanBeWatered() const;
+    
+    // Can this plot be harvested?
+    bool CanBeHarvested() const;
 
 protected:
     virtual void BeginPlay() override;
@@ -48,10 +58,10 @@ protected:
     // Logic
     UPROPERTY()
     TObjectPtr< UCropInstance > CropInstance;
-    
+
     UPROPERTY()
     bool bIsTilled = false;
-    
+
     UPROPERTY()
     bool bIsWatered = false;
 

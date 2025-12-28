@@ -132,3 +132,40 @@ void AFarmPlot::Water()
 
     // TODO: Trigger visual feedback (particles, material change, etc.)
 }
+
+bool AFarmPlot::CanBeTilled() const
+{
+    if ( !CropInstance )
+        return false;
+
+    return !bIsTilled;
+}
+
+void AFarmPlot::Till()
+{
+    if ( !CanBeTilled() )
+        return;
+    
+    bIsTilled = true;
+    bIsWatered = false;
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Tilling.") );
+}
+
+bool AFarmPlot::CanBeWatered() const
+{
+    if ( !CropInstance )
+        return false;
+
+    if ( !bIsTilled )
+        return false;
+
+    return !bIsWatered;
+}
+
+bool AFarmPlot::CanBeHarvested() const
+{
+    if ( !CropInstance )
+        return false;
+
+    return CropInstance->CanHarvest();
+}
