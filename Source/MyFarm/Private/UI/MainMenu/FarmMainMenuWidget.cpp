@@ -5,6 +5,7 @@
 #include "UI/MainMenu/FarmMenuEntryWidget.h"
 #include "Components/VerticalBox.h"
 #include "Components/Widget.h"
+#include "Core/GameInstance/FarmGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 static FText GetMenuItemText( EFarmMainMenuItem MenuItem )
@@ -65,6 +66,7 @@ void UFarmMainMenuWidget::ConfirmSelection()
 
     case EFarmMainMenuItem::NewGame:
         UE_LOG( LogTemp, Log, TEXT("New Game") );
+        RequestNewGame();
         break;
 
     case EFarmMainMenuItem::Options:
@@ -73,7 +75,7 @@ void UFarmMainMenuWidget::ConfirmSelection()
 
     case EFarmMainMenuItem::Exit:
         UE_LOG( LogTemp, Log, TEXT("Exit Game") );
-        QuitGame();
+        RequestQuitGame();
         break;
 
     default:
@@ -92,14 +94,19 @@ void UFarmMainMenuWidget::UpdateVisualSelection()
     }
 }
 
-void UFarmMainMenuWidget::QuitGame()
+void UFarmMainMenuWidget::RequestQuitGame() const
 {
-    APlayerController* PC = GetOwningPlayer();
-    if ( !PC )
-    {
-        UE_LOG( LogTemp, Error, TEXT("PC is null") );
+    UFarmGameInstance* GI = GetGameInstance< UFarmGameInstance >();
+    if ( !GI )
         return;
-    }
-    
-    UKismetSystemLibrary::QuitGame( this, PC, EQuitPreference::Quit, false );
+    GI->RequestFromUIExitGame( GetOwningLocalPlayer() );
+}
+
+void UFarmMainMenuWidget::RequestNewGame() const
+{
+    UE_LOG( LogTemp, Log, TEXT("UFarmMainMenuWidget::RequestNewGame") );
+    UFarmGameInstance* GI = GetGameInstance< UFarmGameInstance >();
+    if ( !GI )
+        return;
+    GI->RequestFromUIStartNewGame();
 }

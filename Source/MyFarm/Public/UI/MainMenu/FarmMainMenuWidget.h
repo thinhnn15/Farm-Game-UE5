@@ -46,5 +46,6 @@ protected:
     int32 CurrentIndex = 0;
     
 protected:
-    void QuitGame();
+    void RequestQuitGame() const;
+    void RequestNewGame() const;
 };
