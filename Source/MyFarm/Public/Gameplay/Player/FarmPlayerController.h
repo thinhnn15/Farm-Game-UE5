@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Gameplay/Tool/HarvestTool.h"
+#include "Gameplay/Tool/HoeTool.h"
+#include "Gameplay/Tool/WateringTool.h"
 #include "Public/Gameplay/Inventory/PlayerInventory.h"
 #include "UI/Inventory/SeedItemEntryWidget.h"
 #include "UI/Inventory/InventoryWidget.h"
@@ -25,6 +28,7 @@ public:
     void OnSeedSelected( FName SeedRowId );
     // Sets the currently equipped tool
     void SetCurrentTool( UToolBase* NewTool );
+    UToolBase* GetCurrentTool() const;
 
 protected:
     virtual void SetupInputComponent() override;
@@ -37,6 +41,8 @@ protected:
     void Debug_ToggleInventory();
     void UseTool();
     void EquipWateringTool();
+    void EquipHoeTool();
+    void EquipHarvestTool();
 
     AActor* GetHoveredActor() const;
 
@@ -77,6 +83,16 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category="UI" )
     TSubclassOf< UInventoryWidget > InventoryWidgetClass;
+    
+    // Tool instance
+    UPROPERTY()
+    TObjectPtr< UWateringTool > WateringTool;
+    
+    UPROPERTY()
+    TObjectPtr< UHoeTool > HoeTool;
+    
+    UPROPERTY()
+    TObjectPtr< UHarvestTool > HarvestTool;
 
 private:
     AFarmPlot* GetHoveredPlot() const;

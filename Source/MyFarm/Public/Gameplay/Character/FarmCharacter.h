@@ -40,6 +40,7 @@ protected:
 
 public:
     virtual void SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent ) override;
+    void RequestUseTool();
 
 protected:
     void HandleMove( const FInputActionValue& Value );

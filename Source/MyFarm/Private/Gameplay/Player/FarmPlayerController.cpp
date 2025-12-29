@@ -34,6 +34,11 @@ void AFarmPlayerController::SetCurrentTool( UToolBase* NewTool )
     CurrentTool = NewTool;
 }
 
+UToolBase* AFarmPlayerController::GetCurrentTool() const
+{
+    return CurrentTool;
+}
+
 void AFarmPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
@@ -73,6 +78,10 @@ void AFarmPlayerController::SetupInputComponent()
 void AFarmPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+
+    WateringTool = NewObject< UWateringTool >( this );
+    HoeTool = NewObject< UHoeTool >( this );
+    HarvestTool = NewObject< UHarvestTool >( this );
 
     bShowMouseCursor = true;
     bEnableClickEvents = true;
@@ -192,6 +201,7 @@ void AFarmPlayerController::Debug_ToggleInventory()
 
 void AFarmPlayerController::UseTool()
 {
+    // TNN-TODO: Need to remove this logic to character?
     if ( !CurrentTool )
         return;
 
@@ -215,8 +225,23 @@ void AFarmPlayerController::UseTool()
 
 void AFarmPlayerController::EquipWateringTool()
 {
-    UWateringTool* WateringTool = NewObject< UWateringTool >( this );
+    if ( !WateringTool )
+        return;
     SetCurrentTool( WateringTool );
+}
+
+void AFarmPlayerController::EquipHoeTool()
+{
+    if ( !HoeTool )
+        return;
+    SetCurrentTool( HoeTool );
+}
+
+void AFarmPlayerController::EquipHarvestTool()
+{
+    if ( !HarvestTool )
+        return;
+    SetCurrentTool( HarvestTool );
 }
 
 AActor* AFarmPlayerController::GetHoveredActor() const

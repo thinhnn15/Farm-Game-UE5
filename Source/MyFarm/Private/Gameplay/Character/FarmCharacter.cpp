@@ -6,12 +6,14 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Gameplay/Player/FarmPlayerController.h"
+#include "Gameplay/Tool/ToolUseContext.h"
+#include "Gameplay/Tool/ToolBase.h"
 
 AFarmCharacter::AFarmCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    // Character Rotation
     // Character rotates based on movement direction
     bUseControllerRotationYaw = false;
 
@@ -58,6 +60,23 @@ void AFarmCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputComp
     }
 }
 
+void AFarmCharacter::RequestUseTool()
+{
+    AFarmPlayerController* FarmPC = Cast< AFarmPlayerController >( GetController() );
+    if ( !FarmPC )
+        return;
+    
+    UToolBase* Tool = FarmPC->GetCurrentTool();
+    if ( !Tool )
+        return;
+    
+    FToolUseContext Context;
+    Context.InstigatorController = FarmPC;
+    Context.InstigatorPawn = this;
+    
+    Tool->Use(Context);
+}
+
 void AFarmCharacter::HandleMove( const FInputActionValue& Value )
 {
     const FVector2D MoveValue = Value.Get< FVector2D >();
@@ -77,4 +96,5 @@ void AFarmCharacter::HandleMove( const FInputActionValue& Value )
 void AFarmCharacter::HandleUseTool( const FInputActionValue& Value )
 {
     UE_LOG( LogTemp, Warning, TEXT("%s"), TEXT("Use Tool") );
+    RequestUseTool();
 }
