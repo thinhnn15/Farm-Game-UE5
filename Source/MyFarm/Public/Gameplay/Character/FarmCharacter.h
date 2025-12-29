@@ -8,6 +8,8 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UInputAction;
+class UEhancedInputComponent;
 
 UCLASS()
 class MYFARM_API AFarmCharacter : public ACharacter
@@ -19,14 +21,21 @@ public:
 
 protected:
     virtual void BeginPlay() override;
-    
+
     // Camera boom positioning the camera behind the character
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Camera" )
     TObjectPtr< USpringArmComponent > CameraBoom;
-    
+
     // Follow camera
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Camera" )
     TObjectPtr< UCameraComponent > FollowCamera;
+
+    // Input actions
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > MoveAction;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > UseToolAction;
 
 public:
     virtual void SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent ) override;
