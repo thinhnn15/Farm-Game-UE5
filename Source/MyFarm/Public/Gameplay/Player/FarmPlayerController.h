@@ -61,12 +61,6 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > ToggleInventoryAction;
-
-    UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    TObjectPtr< UInputAction > UseWaterToolAction;
-
-    UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    TObjectPtr< UInputAction > UseToolAction;
     
     UPROPERTY()
     TObjectPtr< UPlayerInventory > PlayerInventory;
