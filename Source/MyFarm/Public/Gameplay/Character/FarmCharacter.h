@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "FarmCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
-class UInputAction;
 class UEhancedInputComponent;
+class UInputAction;
 
 UCLASS()
 class MYFARM_API AFarmCharacter : public ACharacter
@@ -39,4 +40,8 @@ protected:
 
 public:
     virtual void SetupPlayerInputComponent( class UInputComponent* PlayerInputComponent ) override;
+
+protected:
+    void HandleMove( const FInputActionValue& Value );
+    void HandleUseTool( const FInputActionValue& Value );
 };
