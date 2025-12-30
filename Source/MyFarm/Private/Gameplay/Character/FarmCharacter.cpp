@@ -9,6 +9,8 @@
 #include "Gameplay/Player/FarmPlayerController.h"
 #include "Gameplay/Tool/ToolUseContext.h"
 #include "Gameplay/Tool/ToolBase.h"
+#include "Components/SphereComponent.h"
+#include "Gameplay/Farm/FarmPlot.h"
 
 AFarmCharacter::AFarmCharacter()
 {
@@ -34,11 +36,31 @@ AFarmCharacter::AFarmCharacter()
     FollowCamera = CreateDefaultSubobject< UCameraComponent >( TEXT( "FollowCamera" ) );
     FollowCamera->SetupAttachment( CameraBoom, USpringArmComponent::SocketName );
     FollowCamera->bUsePawnControlRotation = false;
+
+    GetCharacterMovement()->MaxAcceleration = 2048.f;
+    GetCharacterMovement()->BrakingDecelerationWalking = 2048.f;
+
+    InteractSphere = CreateDefaultSubobject< USphereComponent >( TEXT( "InteractSphere" ) );
+    InteractSphere->SetupAttachment( RootComponent );
+    InteractSphere->SetSphereRadius( 200.f );
+
+    InteractSphere->SetGenerateOverlapEvents(true);
+    InteractSphere->SetCollisionEnabled( ECollisionEnabled::QueryOnly );
+    InteractSphere->SetCollisionResponseToAllChannels( ECR_Ignore );
+    InteractSphere->SetCollisionResponseToChannel( ECC_WorldDynamic, ECR_Overlap );
+}
+
+AFarmPlot* AFarmCharacter::GetCurrentInteractablePlot() const
+{
+    return CurrentInteractablePlot;
 }
 
 void AFarmCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    InteractSphere->OnComponentBeginOverlap.AddDynamic( this, &AFarmCharacter::OnInteractSphereBeginOverlap );
+    InteractSphere->OnComponentEndOverlap.AddDynamic( this, &AFarmCharacter::OnInteractSphereEndOverlap );
 }
 
 void AFarmCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputComponent )
@@ -49,15 +71,10 @@ void AFarmCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputComp
     if ( !EnhancedInput )
         return;
 
-    if ( MoveAction )
-    {
-        EnhancedInput->BindAction( MoveAction, ETriggerEvent::Triggered, this, &AFarmCharacter::HandleMove );
-    }
-
-    if ( UseToolAction )
-    {
-        EnhancedInput->BindAction( UseToolAction, ETriggerEvent::Started, this, &AFarmCharacter::HandleUseTool );
-    }
+    if ( !MoveAction || !UseToolAction )
+        return;
+    EnhancedInput->BindAction( MoveAction, ETriggerEvent::Triggered, this, &AFarmCharacter::HandleMove );
+    EnhancedInput->BindAction( UseToolAction, ETriggerEvent::Started, this, &AFarmCharacter::HandleUseTool );
 }
 
 void AFarmCharacter::RequestUseTool()
@@ -65,26 +82,55 @@ void AFarmCharacter::RequestUseTool()
     AFarmPlayerController* FarmPC = Cast< AFarmPlayerController >( GetController() );
     if ( !FarmPC )
         return;
-    
+
     UToolBase* Tool = FarmPC->GetCurrentTool();
     if ( !Tool )
         return;
-    
+
+    if ( !CurrentInteractablePlot )
+        return;
+
+    if ( !IsActorInCameraView( FarmPC, CurrentInteractablePlot ) )
+        return;
+
     FToolUseContext Context;
     Context.InstigatorController = FarmPC;
     Context.InstigatorPawn = this;
-    
-    Tool->Use(Context);
+    Context.TargetActor = CurrentInteractablePlot;
+    Context.WorldLocation = CurrentInteractablePlot->GetActorLocation();
+
+    Tool->Use( Context );
+}
+
+void AFarmCharacter::OnInteractSphereBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep
+                                                   , const FHitResult& SweepResult )
+{
+    UE_LOG(LogTemp, Error, TEXT("SPHERE OVERLAP TRIGGERED WITH %s"), *OtherActor->GetName());
+    AFarmPlot* Plot = Cast< AFarmPlot >( OtherActor );
+    if ( !Plot )
+        return;
+
+    CurrentInteractablePlot = Plot;
+}
+
+void AFarmCharacter::OnInteractSphereEndOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex )
+{
+    if ( OtherActor == CurrentInteractablePlot )
+    {
+        CurrentInteractablePlot = nullptr;
+    }
 }
 
 void AFarmCharacter::HandleMove( const FInputActionValue& Value )
 {
-    const FVector2D MoveValue = Value.Get< FVector2D >();
+    FVector2D MoveValue = Value.Get< FVector2D >();
     if ( !Controller )
         return;
 
     if ( MoveValue.IsNearlyZero() )
         return;
+
+    MoveValue = MoveValue.GetSafeNormal();
 
     const FRotator YawRotation( 0.f, Controller->GetControlRotation().Yaw, 0.f );
     const FVector Forward = FRotationMatrix( YawRotation ).GetUnitAxis( EAxis::X );
