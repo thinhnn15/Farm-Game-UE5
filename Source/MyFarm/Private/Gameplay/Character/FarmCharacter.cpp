@@ -44,10 +44,11 @@ AFarmCharacter::AFarmCharacter()
     InteractSphere->SetupAttachment( RootComponent );
     InteractSphere->SetSphereRadius( 200.f );
 
-    InteractSphere->SetGenerateOverlapEvents(true);
+    InteractSphere->SetGenerateOverlapEvents( true );
     InteractSphere->SetCollisionEnabled( ECollisionEnabled::QueryOnly );
     InteractSphere->SetCollisionResponseToAllChannels( ECR_Ignore );
     InteractSphere->SetCollisionResponseToChannel( ECC_WorldDynamic, ECR_Overlap );
+    InteractSphere->SetCollisionResponseToChannel( ECC_WorldStatic, ECR_Overlap );
 }
 
 AFarmPlot* AFarmCharacter::GetCurrentInteractablePlot() const
@@ -105,7 +106,7 @@ void AFarmCharacter::RequestUseTool()
 void AFarmCharacter::OnInteractSphereBeginOverlap( UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep
                                                    , const FHitResult& SweepResult )
 {
-    UE_LOG(LogTemp, Error, TEXT("SPHERE OVERLAP TRIGGERED WITH %s"), *OtherActor->GetName());
+    UE_LOG( LogTemp, Error, TEXT("SPHERE OVERLAP TRIGGERED WITH %s"), *OtherActor->GetName() );
     AFarmPlot* Plot = Cast< AFarmPlot >( OtherActor );
     if ( !Plot )
         return;
