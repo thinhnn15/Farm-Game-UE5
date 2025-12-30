@@ -2,11 +2,15 @@
 
 
 #include "Gameplay/Farm/FarmPlot.h"
+
+#include "NiagaraFunctionLibrary.h"
 #include "Public/Gameplay/Crop/CropActor.h"
 #include "Public/Gameplay/Crop/CropInstance.h"
 #include "Public/Data/CropTypeData.h"
 #include "Public/Data/CropTypeData.h"
 #include "Components/BoxComponent.h"
+#include "Gameplay/Farm/FarmPlotVisualAsset.h"
+#include "Public/Gameplay/Farm/FarmPlotVisualData.h"
 
 
 AFarmPlot::AFarmPlot()
@@ -41,6 +45,29 @@ void AFarmPlot::SetPlotState( EFarmPlotState NewState )
     if ( PlotState == NewState )
         return;
     PlotState = NewState;
+    UpdatePlotVisuals();
+}
+
+void AFarmPlot::UpdatePlotVisuals()
+{
+    if ( !PlotVisualAsset || !PlotMesh )
+        return;
+
+    const FFarmPlotStateVisual* Visual = PlotVisualAsset->GetVisualForPlotState( PlotState );
+    if ( !Visual )
+        return;
+
+    if ( Visual->SoilMaterial )
+        PlotMesh->SetMaterial( 0, Visual->SoilMaterial );
+
+    if ( Visual->EnterStateX )
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            GetWorld(),
+            Visual->EnterStateX,
+            GetActorLocation()
+        );
+
+    // TNN-TODO: handle for highlight
 }
 
 bool AFarmPlot::CanPlant() const

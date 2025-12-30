@@ -12,6 +12,7 @@ class UCropTypeData;
 class ACropActor;
 class UBoxComponent;
 class UStaticMeshComponent;
+class UFarmPlotVisualAsset;
 
 UENUM( BlueprintType )
 enum class EFarmPlotState : uint8
@@ -63,6 +64,7 @@ public:
 protected:
     virtual void BeginPlay() override;
     void SetPlotState( EFarmPlotState NewState );
+    void UpdatePlotVisuals();
 
 protected:
     // Actor class for visual
@@ -87,4 +89,7 @@ protected:
 
     UPROPERTY( VisibleAnywhere, Category="Components" )
     TObjectPtr< UStaticMeshComponent > PlotMesh;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Visual " )
+    TObjectPtr< UFarmPlotVisualAsset > PlotVisualAsset;
 };
