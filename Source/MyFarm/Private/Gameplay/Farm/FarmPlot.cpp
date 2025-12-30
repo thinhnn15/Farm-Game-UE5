@@ -38,7 +38,7 @@ void AFarmPlot::BeginPlay()
 
 bool AFarmPlot::CanPlant() const
 {
-    return CropInstance == nullptr;
+    return PlotState == EFarmPlotState::Tilled;
 }
 
 bool AFarmPlot::PlantCrop( FName CropRowId )
@@ -48,10 +48,16 @@ bool AFarmPlot::PlantCrop( FName CropRowId )
         UE_LOG( LogTemp, Warning, TEXT("[FarmPlot] Cannot plant crop.") );
         return false;
     }
+    PlotState = EFarmPlotState::Planted;
     ClearCrop();
     // Create Crop Instance (logic)
     CropInstance = NewObject< UCropInstance >( GetGameInstance() );
     CropInstance->Init( CropRowId );
+
+    CropInstance->OnStageChanged.AddDynamic(
+        this,
+        &AFarmPlot::OnCropStageChanged
+    );
 
     // Spawn Crop Actor (visual)
     FActorSpawnParameters Params;
@@ -97,7 +103,7 @@ void AFarmPlot::ClearCrop()
 
 bool AFarmPlot::TryHarvest()
 {
-    if ( !CropInstance || !CropInstance->CanHarvest() )
+    if ( !CanBeHarvested() )
         return false;
 
     if ( !CropInstance->TryHarvest() )
@@ -106,6 +112,7 @@ bool AFarmPlot::TryHarvest()
     // If crop is not regrowable → clear plot
     if ( !CropInstance->IsAlive() )
     {
+        PlotState = EFarmPlotState::Untilled;
         ClearCrop();
     }
 
@@ -115,57 +122,39 @@ bool AFarmPlot::TryHarvest()
 
 void AFarmPlot::Water()
 {
-    if ( !bIsTilled )
-    {
-        UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Water: Cannot water before tilling.") );
+    if ( !CanBeWatered() )
         return;
-    }
 
-    // Prevent watering multiple times a day
-    if ( bIsWatered )
-    {
-        UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Water: Already watered.") );
-        return;
-    }
-    bIsWatered = true;
-    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Plot watered.") );
-
-    // TODO: Trigger visual feedback (particles, material change, etc.)
+    PlotState = EFarmPlotState::Watered;
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Watered.") );
 }
 
 bool AFarmPlot::CanBeTilled() const
 {
-    if ( !CropInstance )
-        return false;
-
-    return !bIsTilled;
+    return PlotState == EFarmPlotState::Untilled;
 }
 
 void AFarmPlot::Till()
 {
     if ( !CanBeTilled() )
         return;
-    
-    bIsTilled = true;
-    bIsWatered = false;
-    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Tilling.") );
+
+    PlotState = EFarmPlotState::Tilled;
+    UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Tilled.") );
 }
 
 bool AFarmPlot::CanBeWatered() const
 {
-    if ( !CropInstance )
-        return false;
-
-    if ( !bIsTilled )
-        return false;
-
-    return !bIsWatered;
+    return PlotState == EFarmPlotState::Planted;
 }
 
 bool AFarmPlot::CanBeHarvested() const
 {
-    if ( !CropInstance )
-        return false;
+    return PlotState == EFarmPlotState::ReadyToHarvest;
+}
 
-    return CropInstance->CanHarvest();
+void AFarmPlot::OnCropStageChanged( ECropGrowthStage NewStage )
+{
+    if ( NewStage == ECropGrowthStage::Harvestable )
+        PlotState = EFarmPlotState::ReadyToHarvest;
 }

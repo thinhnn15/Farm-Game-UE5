@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Gameplay/Crop/CropGrowthStage.h"
 #include "FarmPlot.generated.h"
 
 class UCropInstance;
@@ -11,6 +12,16 @@ class UCropTypeData;
 class ACropActor;
 class UBoxComponent;
 class UStaticMeshComponent;
+
+UENUM( BlueprintType )
+enum class EFarmPlotState : uint8
+{
+    Untilled UMETA( DisplayName="Untilled" )
+    , Tilled UMETA( DisplayName="Tilled" )
+    , Planted UMETA( DisplayName="Planted" )
+    , Watered UMETA( DisplayName="Watered" )
+    , ReadyToHarvest UMETA( DisplayName="ReadyToHarvest" )
+};
 
 UCLASS()
 class MYFARM_API AFarmPlot : public AActor
@@ -35,16 +46,19 @@ public:
 
     // Water this plot if possible
     void Water();
-    
+
     // Can this plot be tilled by hoe tool?
     bool CanBeTilled() const;
     void Till();
-    
+
     // Can this plot be watered?
     bool CanBeWatered() const;
-    
+
     // Can this plot be harvested?
     bool CanBeHarvested() const;
+
+    UFUNCTION()
+    void OnCropStageChanged( ECropGrowthStage NewStage );
 
 protected:
     virtual void BeginPlay() override;
@@ -59,11 +73,8 @@ protected:
     UPROPERTY()
     TObjectPtr< UCropInstance > CropInstance;
 
-    UPROPERTY()
-    bool bIsTilled = false;
-
-    UPROPERTY()
-    bool bIsWatered = false;
+    UPROPERTY( VisibleAnywhere, Category="Farm" )
+    EFarmPlotState PlotState = EFarmPlotState::Untilled;
 
     // Visual
     UPROPERTY()
