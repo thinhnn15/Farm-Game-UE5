@@ -36,6 +36,13 @@ void AFarmPlot::BeginPlay()
     Super::BeginPlay();
 }
 
+void AFarmPlot::SetPlotState( EFarmPlotState NewState )
+{
+    if ( PlotState == NewState )
+        return;
+    PlotState = NewState;
+}
+
 bool AFarmPlot::CanPlant() const
 {
     return PlotState == EFarmPlotState::Tilled;
@@ -48,7 +55,7 @@ bool AFarmPlot::PlantCrop( FName CropRowId )
         UE_LOG( LogTemp, Warning, TEXT("[FarmPlot] Cannot plant crop.") );
         return false;
     }
-    PlotState = EFarmPlotState::Planted;
+    SetPlotState( EFarmPlotState::Planted );
     ClearCrop();
     // Create Crop Instance (logic)
     CropInstance = NewObject< UCropInstance >( GetGameInstance() );
@@ -112,7 +119,7 @@ bool AFarmPlot::TryHarvest()
     // If crop is not regrowable → clear plot
     if ( !CropInstance->IsAlive() )
     {
-        PlotState = EFarmPlotState::Untilled;
+        SetPlotState( EFarmPlotState::Untilled );
         ClearCrop();
     }
 
@@ -125,7 +132,7 @@ void AFarmPlot::Water()
     if ( !CanBeWatered() )
         return;
 
-    PlotState = EFarmPlotState::Watered;
+    SetPlotState( EFarmPlotState::Watered );
     UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Watered.") );
 }
 
@@ -139,7 +146,7 @@ void AFarmPlot::Till()
     if ( !CanBeTilled() )
         return;
 
-    PlotState = EFarmPlotState::Tilled;
+    SetPlotState( EFarmPlotState::Tilled );
     UE_LOG( LogTemp, Log, TEXT("[FarmPlot] Tilled.") );
 }
 
@@ -156,5 +163,5 @@ bool AFarmPlot::CanBeHarvested() const
 void AFarmPlot::OnCropStageChanged( ECropGrowthStage NewStage )
 {
     if ( NewStage == ECropGrowthStage::Harvestable )
-        PlotState = EFarmPlotState::ReadyToHarvest;
+        SetPlotState( EFarmPlotState::ReadyToHarvest );
 }

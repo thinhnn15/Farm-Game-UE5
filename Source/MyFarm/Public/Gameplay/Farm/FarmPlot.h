@@ -62,6 +62,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    void SetPlotState( EFarmPlotState NewState );
 
 protected:
     // Actor class for visual
