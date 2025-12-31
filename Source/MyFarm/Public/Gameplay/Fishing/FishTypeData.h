@@ -3,16 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
+#include "FishingWaterType.h"
 #include "FishTypeData.generated.h"
 
 USTRUCT( BlueprintType )
-struct MYFARM_API FFishTypeRow
+struct MYFARM_API FFishTypeRow : public FTableRowBase
 {
     GENERATED_BODY()
 
 public:
+    // ID
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FName FishId;
+
+    // Display Name
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    FText DisplayName;
+
+    // Environment
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    EFishingWaterType WaterType;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     int32 MinBiteTime = 2;
