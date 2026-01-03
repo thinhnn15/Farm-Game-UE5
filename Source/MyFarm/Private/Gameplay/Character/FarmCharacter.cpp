@@ -87,13 +87,6 @@ void AFarmCharacter::RequestUseTool()
     UToolBase* Tool = FarmPC->GetCurrentTool();
     if ( !Tool )
         return;
-    // if ( !Tool )
-    // {
-    //     // TNN-TODO: For debug only
-    //     UHoeTool* HoeTool = NewObject< UHoeTool >( this );
-    //     FarmPC->SetCurrentTool( HoeTool );
-    //     Tool = HoeTool;
-    // }
 
     if ( !CurrentInteractablePlot )
         return;

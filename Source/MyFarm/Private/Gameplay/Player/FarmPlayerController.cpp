@@ -69,6 +69,12 @@ void AFarmPlayerController::SetupInputComponent()
     EnhancedInputComponent->BindAction( PlantCropAction, ETriggerEvent::Started, this, &AFarmPlayerController::TryPlant );
     ensure( ToggleInventoryAction );
     EnhancedInputComponent->BindAction( ToggleInventoryAction, ETriggerEvent::Started, this, &AFarmPlayerController::Debug_ToggleInventory );
+    ensure( EquipHoeAction );
+    EnhancedInputComponent->BindAction( EquipHoeAction, ETriggerEvent::Started, this, &AFarmPlayerController::EquipHoeTool );
+    // ensure( EquipWateringCanAction );
+    // EnhancedInputComponent->BindAction( EquipWateringCanAction, ETriggerEvent::Started, this, &AFarmPlayerController::EquipWateringTool );
+    // ensure( EquipHarvestToolAction );
+    // EnhancedInputComponent->BindAction( EquipHarvestToolAction, ETriggerEvent::Started, this, &AFarmPlayerController::EquipHarvestTool );
 }
 
 void AFarmPlayerController::BeginPlay()

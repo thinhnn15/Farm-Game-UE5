@@ -61,7 +61,17 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Input" )
     TObjectPtr< UInputAction > ToggleInventoryAction;
+
+    // For debug, need to move this logic to inventory later
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > EquipHoeAction;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > EquipWateringCanAction;
     
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TObjectPtr< UInputAction > EquipHarvestToolAction;
+
     UPROPERTY()
     TObjectPtr< UPlayerInventory > PlayerInventory;
 
@@ -77,14 +87,14 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category="UI" )
     TSubclassOf< UInventoryWidget > InventoryWidgetClass;
-    
+
     // Tool instance
     UPROPERTY()
     TObjectPtr< UWateringTool > WateringTool;
-    
+
     UPROPERTY()
     TObjectPtr< UHoeTool > HoeTool;
-    
+
     UPROPERTY()
     TObjectPtr< UHarvestTool > HarvestTool;
 
