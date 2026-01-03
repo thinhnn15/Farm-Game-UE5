@@ -4,24 +4,25 @@
 #include "Gameplay/Farm/FarmPlot.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Public/Gameplay/Crop/CropActor.h"
-#include "Public/Gameplay/Crop/CropInstance.h"
-#include "Public/Data/CropTypeData.h"
-#include "Public/Data/CropTypeData.h"
+#include "Gameplay/Crop/CropActor.h"
+#include "Gameplay/Crop/CropInstance.h"
+#include "Data/CropTypeData.h"
 #include "Components/BoxComponent.h"
 #include "Gameplay/Farm/FarmPlotVisualAsset.h"
-#include "Public/Gameplay/Farm/FarmPlotVisualData.h"
+#include "Gameplay/Farm/FarmPlotVisualData.h"
 
 
 AFarmPlot::AFarmPlot()
 {
     PrimaryActorTick.bCanEverTick = false;
-
+    USceneComponent* Root = CreateDefaultSubobject< USceneComponent >( TEXT( "Root" ) );
+    SetRootComponent( Root );
     // Collision (Root)
     PlotCollision = CreateDefaultSubobject< UBoxComponent >( TEXT( "PlotCollision" ) );
-    SetRootComponent( PlotCollision );
+    PlotCollision->SetupAttachment( Root );
 
     PlotCollision->SetBoxExtent( FVector( 100.f, 100.f, 20.f ) );
+    PlotCollision->SetRelativeLocation( FVector( 0.f, 0.f, 20.f ) );
     PlotCollision->SetCollisionEnabled( ECollisionEnabled::QueryOnly );
     PlotCollision->SetCollisionObjectType( ECC_WorldDynamic );
 
@@ -31,6 +32,7 @@ AFarmPlot::AFarmPlot()
     // Visual Mesh
     PlotMesh = CreateDefaultSubobject< UStaticMeshComponent >( TEXT( "PlotMesh" ) );
     PlotMesh->SetupAttachment( PlotCollision );
+    PlotMesh->SetRelativeLocation( FVector( 0.f, 0.f, 1.0f ) );
 
     PlotMesh->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
