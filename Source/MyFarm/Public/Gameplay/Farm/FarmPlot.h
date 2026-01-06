@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Gameplay/Crop/CropGrowthStage.h"
+#include "Gameplay/Interface/FarmInteractable.h"
 #include "FarmPlot.generated.h"
 
 class UCropInstance;
@@ -25,9 +26,13 @@ enum class EFarmPlotState : uint8
 };
 
 UCLASS()
-class MYFARM_API AFarmPlot : public AActor
+class MYFARM_API AFarmPlot : public AActor,
+                             public IFarmInteractable
 {
     GENERATED_BODY()
+    
+public:
+    virtual void Interact(const FFarmInteractionContext& Context) override;
 
 public:
     AFarmPlot();

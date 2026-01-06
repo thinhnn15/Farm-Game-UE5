@@ -12,6 +12,21 @@
 #include "Gameplay/Farm/FarmPlotVisualData.h"
 
 
+void AFarmPlot::Interact( const FFarmInteractionContext& Context )
+{
+    if ( !Context.Instigator )
+        return;
+
+    if ( Context.UsedTool == nullptr )
+    {
+        if ( CanBeHarvested() )
+            TryHarvest();
+        
+        return;
+    }
+    
+}
+
 AFarmPlot::AFarmPlot()
 {
     PrimaryActorTick.bCanEverTick = false;
