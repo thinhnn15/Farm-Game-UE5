@@ -30,9 +30,9 @@ class MYFARM_API AFarmPlot : public AActor,
                              public IFarmInteractable
 {
     GENERATED_BODY()
-    
+
 public:
-    virtual void Interact(const FFarmInteractionContext& Context) override;
+    virtual void Interact( const FFarmInteractionContext& Context ) override;
 
 public:
     AFarmPlot();

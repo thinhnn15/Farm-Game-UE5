@@ -14,16 +14,16 @@
 
 void AFarmPlot::Interact( const FFarmInteractionContext& Context )
 {
-    if ( !Context.Instigator )
+    if ( !Context.InstigatorController )
         return;
 
-    if ( Context.UsedTool == nullptr )
-    {
-        if ( CanBeHarvested() )
-            TryHarvest();
-        
-        return;
-    }
+    // if ( Context.Tool == nullptr )
+    // {
+    //     if ( CanBeHarvested() )
+    //         TryHarvest();
+    //     
+    //     return;
+    // }
     
 }
 
