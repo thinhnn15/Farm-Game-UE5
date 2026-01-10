@@ -18,9 +18,9 @@ class MYFARM_API UFarmCropDataSubsystem : public UGameInstanceSubsystem
 
 public:
     const FCropTypeRow* GetCropData( FName CropRowId ) const;
-    
+
 protected:
-    virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+    virtual void Initialize( FSubsystemCollectionBase& Collection ) override;
 
 protected:
     UPROPERTY( EditDefaultsOnly, Category = "Data" )
